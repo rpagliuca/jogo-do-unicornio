@@ -7,12 +7,28 @@ const c = baixa.getContext('2d');
 let S = 4; // quantas vezes a pixel art é ampliada
 
 function ajustar() {
-  S = Math.max(1, Math.floor(Math.min(innerWidth / 192, innerHeight / H)));
+  const k = Math.min(innerWidth / 192, innerHeight / H);
+  S = k >= 2 && !toque ? Math.floor(k) : Math.max(1, k); // no celular, ocupa a tela toda
+
   tela.width = 192 * S; tela.height = H * S;
 }
 addEventListener('resize', ajustar);
 
 // ---------- controle e teclado
+// Três jeitos de jogar: controle DS4, botões na tela (celular) e teclado (computador sem controle).
+const toque = matchMedia('(pointer: coarse)').matches || /toque/.test(location.hash);
+const virtual = {};
+if (toque) {
+  document.body.classList.add('toque');
+  document.querySelectorAll('#controles [data-botao]').forEach(el => {
+    const b = el.dataset.botao;
+    const solta = e => { virtual[b] = false; el.classList.remove('apertado'); };
+    el.addEventListener('pointerdown', e => { e.preventDefault(); destravarSom(); virtual[b] = true; el.classList.add('apertado'); el.setPointerCapture(e.pointerId); });
+    ['pointerup', 'pointercancel', 'lostpointercapture'].forEach(n => el.addEventListener(n, solta));
+  });
+}
+function jeito() { return controle ? 'ds4' : toque ? 'toque' : 'teclado'; }
+function nomeComer() { return jeito() === 'teclado' ? 'C' : '○'; }
 // Mapa padrão do Chrome para o DS4: 0 = X, 1 = ○, 9 = OPTIONS, 12/13 = direcional ▲ ▼.
 const teclas = {};
 addEventListener('keydown', e => {
@@ -32,11 +48,11 @@ function lerEntrada() {
   const b = i => !!(gp && gp.buttons[i] && gp.buttons[i].pressed);
   const ay = gp ? gp.axes[1] || 0 : 0;
   const agora = {
-    start: b(9) || !!teclas.Enter,
-    x: b(0) || !!teclas.Space || !!teclas.KeyX,
-    o: b(1) || !!teclas.KeyC || !!teclas.KeyO,
-    cima: b(12) || ay < -0.4 || !!teclas.ArrowUp,
-    baixo: b(13) || ay > 0.4 || !!teclas.ArrowDown,
+    start: b(9) || !!teclas.Enter || !!virtual.start,
+    x: b(0) || !!teclas.Space || !!teclas.KeyX || !!virtual.x,
+    o: b(1) || !!teclas.KeyC || !!teclas.KeyO || !!virtual.o,
+    cima: b(12) || ay < -0.4 || !!teclas.ArrowUp || !!virtual.cima,
+    baixo: b(13) || ay > 0.4 || !!teclas.ArrowDown || !!virtual.baixo,
   };
   const apertou = {};
   for (const k in agora) apertou[k] = agora[k] && !antes[k];
@@ -112,8 +128,11 @@ const HISTORIA = [
   { cena: 'dia', quem: 'Menina', txt: 'Bom dia, cavalinho! Vamos passear?' },
   { cena: 'tarde', quem: 'Fada', txt: 'Que cavalinho corajoso! Vou te dar um presente mágico.', fada: 'desce' },
   { cena: 'tarde', quem: 'Fada', txt: 'Agora você voa! Leve esta bolsinha para guardar algodão-doce.', fada: 'parada', poder: 'agora' },
-  { cena: 'tarde', quem: 'Fada', txt: 'Use ▲ e ▼ para desviar dos doces. Perto de uma nuvem de algodão-doce, aperte X para pegar um pedacinho. Para comer, aperte ○.', fada: 'parada', poder: 'tem' },
+  { cena: 'tarde', quem: 'Fada', txt: '', fada: 'parada', poder: 'tem' }, // texto do tutorial: ver tutorial()
 ];
+function tutorial() {
+  return `Use ▲ e ▼ para desviar dos doces. Perto de uma nuvem de algodão-doce, aperte X para pegar um pedacinho. Para comer, aperte ${nomeComer()}.`;
+}
 const FINAL = { quem: 'Fada', txt: 'Você conseguiu! Agora é o unicórnio mais forte do arco-íris.' };
 
 let modo = 'titulo', passo = 0, tempo = 0, letras = 0;
@@ -270,7 +289,7 @@ function atualizar(dt, e) {
   tempo += dt;
   ultimoBotaoT += dt;
   if (modo === 'titulo') {
-    if (e.apertou.start) { som('start'); modo = 'historia'; passo = 0; tempo = 0; letras = 0; }
+    if (e.apertou.start) { som('start'); HISTORIA[3].txt = tutorial(); modo = 'historia'; passo = 0; tempo = 0; letras = 0; }
   } else if (modo === 'historia' || modo === 'final') {
     const txt = modo === 'final' ? FINAL.txt : HISTORIA[passo].txt;
     const antesL = Math.floor(letras);
@@ -397,7 +416,7 @@ function dialogo(quem, txt, n) {
   caixa(8, y, 176, h, '#f8dfae', '#8a4b22');
   texto(quem + ':', 13, y + 4, 5.2, '#a03a6c', 'left', null);
   linhas.forEach((l, i) => texto(l, 13, y + 10.5 + i * 6.4, 5.2, '#3b2412', 'left', null));
-  if (n >= txt.length && Math.floor(tempo * 2) % 2) texto('▼ X', 178, y + h - 7.5, 4.4, '#8a4b22', 'right', null);
+  if (n >= txt.length && Math.floor(tempo * 2) % 2) texto(jeito() === 'teclado' ? '▼ Enter' : '▼ X', 178, y + h - 7.5, 4.4, '#8a4b22', 'right', null);
 }
 function hud() {
   // força: 6 cores
@@ -418,7 +437,7 @@ function hud() {
   out.fillStyle = '#a03a6c'; out.beginPath(); out.arc(155 * S, 13.5 * S, 2.6 * S, 0, Math.PI * 2); out.fill();
   out.fillStyle = '#ff8fc4'; out.beginPath(); out.arc(155 * S, 13.5 * S, 1.9 * S, 0, Math.PI * 2); out.fill();
   texto(`× ${G.bolsa}`, 159, 11, 4.4);
-  if (G.bolsa > 0 && G.L < 6) texto('○ come', 186, 11, 4.4, Math.floor(tempo * 2) % 2 ? '#fff36b' : '#ffffff', 'right');
+  if (G.bolsa > 0 && G.L < 6) texto(`${nomeComer()} come`, 186, 11, 4.4, Math.floor(tempo * 2) % 2 ? '#fff36b' : '#ffffff', 'right');
   // nuvem perto: mostra o X
   if (G.perto && !G.pega) {
     const o = G.perto, x = o.x, y = o.y - 19;
@@ -448,9 +467,10 @@ function desenhar() {
     const cx = 96;
     texto('Jogo criado por Sofia', cx, 42, 6, '#ffffff', 'center', '#a03a6c');
     if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', cx, 52, 7, '#5b2a7a', 'center', '#ffffffaa');
-    if (!controle) { texto('Ligue o controle e aperte um botão', cx, 64, 4.2, '#3b2a5a', 'center', null); texto('ou use o teclado', cx, 69.5, 4.2, '#3b2a5a', 'center', null); }
-    else if (!mapaPadrao) texto('Controle com botões fora do padrão', cx, 64, 4.2, '#3b2a5a', 'center', null);
-    else { texto('Controle conectado ✓', cx, 64, 4.2, '#3b2a5a', 'center', null); texto('aperte X, ○, ▲ ou ▼ para testar', cx, 69.5, 4.2, '#3b2a5a', 'center', null); }
+    const dica = (l1, l2) => { texto(l1, cx, 64, 4.2, '#3b2a5a', 'center', null); if (l2) texto(l2, cx, 69.5, 4.2, '#3b2a5a', 'center', null); };
+    if (controle) dica(mapaPadrao ? 'Controle conectado ✓' : 'Controle com botões fora do padrão', mapaPadrao ? 'aperte X, ○, ▲ ou ▼ para testar' : '');
+    else if (toque) dica('Toque em START para começar', '');
+    else dica('Teclado: Enter começa · setas desviam', 'X pega a nuvem · C come · ou ligue um controle');
     if (ultimoBotao && ultimoBotaoT < 2) texto(`Botão: ${ultimoBotao}`, cx, 76, 4.2, '#a03a6c', 'center', null);
   } else if (modo === 'historia') {
     const h = HISTORIA[passo]; dialogo(h.quem, h.txt, letras);
@@ -474,7 +494,7 @@ function desenhar() {
 // ---------- começo
 let ultimo = performance.now();
 function quadro(agora) {
-  const dt = Math.min(0.05, (agora - ultimo) / 1000);
+  const dt = Math.max(0, Math.min(0.05, (agora - ultimo) / 1000)) || 0;
   ultimo = agora;
   atualizar(dt, lerEntrada());
   agendarMusica();
@@ -486,9 +506,10 @@ prepararCenas();
 ajustar();
 // atalhos para testar: #nivel3 começa a corrida no nível 3; #final vai direto ao final
 const atalho = location.hash.slice(1);
-if (/^nivel\d$/.test(atalho)) {
+HISTORIA[3].txt = tutorial();
+if (/^nivel\d/.test(atalho)) {
   novaCorrida(); modo = 'jogo'; G.L = +atalho[5]; G.fundo = G.L; G.bolsa = 2;
   for (let i = 0; i < 4; i++) { criar(i % 2 ? 'algodao' : DOCES[i]); G.objs[i].x = 70 + i * 34; }
-} else if (atalho === 'final') { modo = 'final'; }
-else if (/^historia\d$/.test(atalho)) { modo = 'historia'; passo = +atalho[8]; tempo = 2; letras = 999; }
+} else if (atalho.startsWith('final')) { modo = 'final'; }
+else if (/^historia\d/.test(atalho)) { modo = 'historia'; passo = +atalho[8]; tempo = 2; letras = 999; }
 requestAnimationFrame(quadro);

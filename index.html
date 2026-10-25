@@ -2,18 +2,48 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Jogo do Unicórnio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;700&display=swap">
 <style>
-  html, body { margin: 0; height: 100%; background: #1b1525; overflow: hidden; }
+  html, body { margin: 0; height: 100%; background: #1b1525; overflow: hidden; touch-action: none; -webkit-user-select: none; user-select: none; }
   body { display: flex; align-items: center; justify-content: center; }
   canvas { display: block; image-rendering: pixelated; }
+
+  /* botões na tela, só no celular e no tablet */
+  #controles { display: none; }
+  body.toque #controles { display: block; }
+  #controles button {
+    position: fixed; display: flex; align-items: center; justify-content: center;
+    font: 700 22px "Pixelify Sans", "Courier New", monospace; color: #fff;
+    background: #2d224099; border: 3px solid #ffffffcc; border-radius: 50%;
+    width: 64px; height: 64px; padding: 0; touch-action: none; -webkit-tap-highlight-color: transparent;
+  }
+  #controles button.apertado { background: #ff8fc4cc; transform: scale(0.94); }
+  #controles .cima { left: max(18px, env(safe-area-inset-left)); bottom: calc(96px + env(safe-area-inset-bottom)); }
+  #controles .baixo { left: max(18px, env(safe-area-inset-left)); bottom: calc(22px + env(safe-area-inset-bottom)); }
+  #controles .x { right: max(18px, env(safe-area-inset-right)); bottom: calc(22px + env(safe-area-inset-bottom)); width: 74px; height: 74px; }
+  #controles .o { right: calc(max(18px, env(safe-area-inset-right)) + 86px); bottom: calc(46px + env(safe-area-inset-bottom)); }
+  #controles .start { left: 50%; transform: translateX(-50%); top: calc(10px + env(safe-area-inset-top)); width: auto; height: 34px; border-radius: 17px; padding: 0 16px; font-size: 15px; }
+  #controles .start.apertado { transform: translateX(-50%) scale(0.94); }
+  #girar { display: none; }
+  @media (orientation: portrait) {
+    body.toque #girar { display: flex; position: fixed; inset: 0; align-items: center; justify-content: center; text-align: center;
+      background: #1b1525ee; color: #fff; font: 20px "Pixelify Sans", monospace; padding: 24px; z-index: 2; }
+  }
 </style>
 </head>
 <body>
 <canvas id="tela"></canvas>
+<div id="controles" aria-label="Controles na tela">
+  <button class="start" data-botao="start">START</button>
+  <button class="cima" data-botao="cima" aria-label="Para cima">▲</button>
+  <button class="baixo" data-botao="baixo" aria-label="Para baixo">▼</button>
+  <button class="o" data-botao="o" aria-label="Comer">○</button>
+  <button class="x" data-botao="x" aria-label="Pegar">X</button>
+</div>
+<div id="girar">Vire o celular de lado para jogar 🦄</div>
 <script src="src/desenho.js"></script>
 <script src="src/fundos.js"></script>
 <script src="src/jogo.js"></script>
