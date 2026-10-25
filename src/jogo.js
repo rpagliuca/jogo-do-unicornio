@@ -24,10 +24,11 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { teclas[e.code] = false; });
 addEventListener('pointerdown', () => { destravarSom(); });
-let antes = {}, controle = null;
+let antes = {}, controle = null, mapaPadrao = true, ultimoBotao = null, ultimoBotaoT = 0;
 function lerEntrada() {
   const gp = [...(navigator.getGamepads ? navigator.getGamepads() : [])].find(g => g && g.connected);
   controle = gp ? gp.id : null;
+  mapaPadrao = !gp || gp.mapping === 'standard';
   const b = i => !!(gp && gp.buttons[i] && gp.buttons[i].pressed);
   const ay = gp ? gp.axes[1] || 0 : 0;
   const agora = {
@@ -40,6 +41,8 @@ function lerEntrada() {
   const apertou = {};
   for (const k in agora) apertou[k] = agora[k] && !antes[k];
   antes = agora;
+  const nomes = { start: 'OPTIONS (START)', x: 'X', o: '○', cima: '▲', baixo: '▼' };
+  for (const k in apertou) if (apertou[k]) { ultimoBotao = nomes[k]; ultimoBotaoT = 0; }
   return { agora, apertou };
 }
 function telaCheia() {
@@ -232,6 +235,7 @@ function atualizarCorrida(dt, e) {
 // ---------- atualizar
 function atualizar(dt, e) {
   tempo += dt;
+  ultimoBotaoT += dt;
   if (modo === 'titulo') {
     if (e.apertou.start) { som('start'); modo = 'historia'; passo = 0; tempo = 0; letras = 0; }
   } else if (modo === 'historia' || modo === 'final') {
@@ -391,7 +395,8 @@ function desenhar() {
   if (modo === 'titulo') {
     texto('Jogo do Unicórnio', 96, 26, 15, '#ffffff', 'center', '#b0367a');
     if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', 96, 50, 7, '#5b2a7a', 'center', '#ffffffaa');
-    texto(controle ? 'Controle conectado' : 'Ligue o controle e aperte um botão · ou use o teclado', 96, 64, 3.8, '#3b2a5a', 'center', null);
+    texto(controle ? (mapaPadrao ? 'Controle conectado ✓ · aperte X, ○, ▲ ou ▼ para testar' : 'Controle conectado, mas com botões fora do padrão') : 'Ligue o controle e aperte um botão · ou use o teclado', 96, 64, 4.2, '#3b2a5a', 'center', null);
+    if (ultimoBotao && ultimoBotaoT < 2) texto(`Botão: ${ultimoBotao}`, 96, 71, 4.2, '#a03a6c', 'center', null);
   } else if (modo === 'historia') {
     const h = HISTORIA[passo]; dialogo(h.quem, h.txt, letras);
   } else if (modo === 'final') {
