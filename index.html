@@ -27,17 +27,22 @@
   #controles .o { right: calc(max(18px, env(safe-area-inset-right)) + 86px); bottom: calc(46px + env(safe-area-inset-bottom)); }
   #controles .start { left: 50%; transform: translateX(-50%); top: calc(10px + env(safe-area-inset-top)); width: auto; height: 34px; border-radius: 17px; padding: 0 16px; font-size: 15px; }
   #controles .start.apertado { transform: translateX(-50%) scale(0.94); }
-  #girar { display: none; }
+  /* celular em pé (o navegador do Instagram não gira a tela): jogo no alto, botões embaixo */
+  @media (orientation: portrait) {
+    body.toque { align-items: flex-start; padding-top: calc(64px + env(safe-area-inset-top)); box-sizing: border-box; }
+    body.toque #controles button { width: 78px; height: 78px; font-size: 26px; }
+    body.toque #controles .cima { left: max(24px, env(safe-area-inset-left)); bottom: calc(130px + env(safe-area-inset-bottom)); }
+    body.toque #controles .baixo { left: max(24px, env(safe-area-inset-left)); bottom: calc(36px + env(safe-area-inset-bottom)); }
+    body.toque #controles .x { right: max(24px, env(safe-area-inset-right)); bottom: calc(36px + env(safe-area-inset-bottom)); width: 90px; height: 90px; }
+    body.toque #controles .o { right: calc(max(24px, env(safe-area-inset-right)) + 104px); bottom: calc(76px + env(safe-area-inset-bottom)); }
+    body.toque #controles .start { top: auto; bottom: calc(230px + env(safe-area-inset-bottom)); width: auto; height: 40px; font-size: 17px; }
+  }
   /* aba História: só no site publicado e só na tela de abertura */
   #aba-historia { display: none; position: fixed; top: calc(10px + env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
     font: 700 16px "Pixelify Sans", "Courier New", monospace; color: #3b2412; background: #f8dfae; border: 3px solid #8a4b22;
     border-radius: 8px; padding: 6px 12px; text-decoration: none; z-index: 1; }
   body.site.titulo #aba-historia { display: block; }
   #aba-historia:focus-visible { outline: 3px solid #ff8fc4; outline-offset: 2px; }
-  @media (orientation: portrait) {
-    body.toque #girar { display: flex; position: fixed; inset: 0; align-items: center; justify-content: center; text-align: center;
-      background: #1b1525ee; color: #fff; font: 20px "Pixelify Sans", monospace; padding: 24px; z-index: 2; }
-  }
 </style>
 </head>
 <body>
@@ -50,7 +55,6 @@
   <button class="x" data-botao="x" aria-label="Pegar">X</button>
 </div>
 <a id="aba-historia" href="historia.html">📖 História</a>
-<div id="girar">Vire o celular de lado para jogar 🦄</div>
 <script src="src/desenho.js"></script>
 <script src="src/fundos.js"></script>
 <script src="src/jogo.js"></script>

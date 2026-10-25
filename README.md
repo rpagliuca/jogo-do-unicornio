@@ -10,7 +10,7 @@ come, fica mais forte e mais colorido, até virar arco-íris.
 ## Como jogar
 
 No site acima, ou abrindo o `index.html` no Chrome (dois cliques no arquivo já funciona; nada para instalar).
-Funciona com o controle DS4, com o teclado e, no celular deitado, com botões na tela.
+Funciona com o controle DS4, com o teclado e, no celular (em pé ou deitado), com botões na tela.
 
 | Controle DS4 | Teclado | O que faz |
 |---|---|---|
