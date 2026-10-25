@@ -15,7 +15,7 @@
   --f-game:"Pixelify Sans","Courier New",monospace; --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 @media (prefers-color-scheme: dark){:root{--bg:#1b1525;--fg:#f4ebf8;--muted:#b9a9c9;--card:#251d32;--line:#3a2e4b;--accent:#ff8ccb;color-scheme:dark}}
-*{box-sizing:border-box}
+*{box-sizing:border-box;font-variant-ligatures:none}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body)}
 a{color:var(--accent)}
 .abas{position:sticky;top:0;z-index:5;background:var(--wood);box-shadow:0 3px 0 #5c3014}
@@ -66,6 +66,8 @@ kbd{font:600 13px var(--f-game);background:var(--card);border:1px solid var(--li
 @media(max-width:480px){.galeria{grid-template-columns:minmax(0,1fr)}}
 figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
 figcaption{font-size:14px;color:var(--muted)}
+.desenho{margin-top:12px;max-width:420px}
+.desenho img{width:100%;height:auto;border-radius:8px;border:1px solid var(--line);transform:rotate(-1.5deg)}
 .versoes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
 @media(max-width:780px){.versoes{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .versoes img{width:100%;height:auto;border-radius:6px;border:1px solid var(--line)}
@@ -140,7 +142,8 @@ footer{color:var(--muted);font-size:14px}
       <li><time>15:20</time><b>A primeira ideia, por escrito.</b><p>Unicórnios. Uma pessoa tem um cavalo, uma fada o transforma num unicórnio rosa, que muda de cor ao ficar mais forte até virar arco-íris. Funciona com o controle DS4. Abertura com "Jogo do Unicórnio" e um arco-íris. Estilo parecido com o Stardew Valley. Desviar de doces. Feito em JavaScript, no navegador.</p></li>
       <li><time>15:28</time><b>Key-frames, versão 1.</b><p>Nove telas desenhadas em pixel art, a história em oito passos e as seis cores. Ainda com o jogo visto de lado.</p></li>
       <li><time>15:30</time><b>A Sofia escolhe o Stardew Valley.</b><p>O jogo passa a ter o chão em quadradinhos, os personagens de lado e sombra para mostrar a altura. O Rafael pede: "não programe ainda". Ganha uma seção de direção de arte.</p></li>
-      <li><time>15:40</time><b>O desenho a lápis da Sofia.</b><p>Em lápis roxo: o unicórnio pequeno voando perto de uma nuvem, um controle enorme cheio de doces e uma barra de chocolate. Daí saíram os doces gigantes como obstáculos e o desvio com cima e baixo. Ela decide também que o cavalo já voa baixinho desde o começo, que o cenário fica mais bonito conforme ele avança e que só as nuvens de algodão-doce dão força.</p></li>
+      <li><time>15:40</time><b>O desenho a lápis da Sofia.</b><p>Em lápis de cor: o unicórnio pequeno voando perto de uma nuvem, um controle enorme cheio de doces e uma barra de chocolate. Daí saíram os doces gigantes como obstáculos e o desvio com cima e baixo. Ela decide também que o cavalo já voa baixinho desde o começo, que o cenário fica mais bonito conforme ele avança e que só as nuvens de algodão-doce dão força.</p>
+        <figure class="desenho"><img src="prints/desenho-da-sofia.jpg" alt="Desenho a lápis de cor da Sofia: no alto, uma nuvem e a barra de chocolate com a palavra BARRA; no meio, um pirulito e o unicórnio voando; embaixo, um controle enorme de braços levantados, com botões e doces desenhados, e um cupcake ao lado" loading="lazy" width="750" height="1000"><figcaption>O desenho original da Sofia, a referência de escala dos doces: o unicórnio pequeno voando perto de uma nuvem e de um pirulito; o controle enorme, que mostra como ela ia jogar, com um cupcake ou brigadeiro ao lado; e, no alto, a barra de chocolate.</figcaption></figure></li>
       <li><time>15:46</time><b>A bolsinha e a vida.</b><p>Perto da nuvem, um botão faz o cavalo ir até ela, pegar um pedacinho com a pata e guardar numa bolsinha bonitinha; outro botão come. E o unicórnio tem vida: cada trombada num doce tira um pouquinho.</p></li>
       <li><time>15:50</time><b>Do chão ao céu, rápido.</b><p>Só o comecinho é perto do chão. Na segunda ou terceira cor ele já voa alto; da quarta em diante não há mais fazenda, só céu, estrelas e o arco-íris.</p></li>
       <li class="marco"><time>15:55</time><b>Aprovado.</b><p>"A Sofia está muito satisfeita com o planejamento." O algodão-doce também devolve um coração. X pega, bolinha come. Pode programar.</p></li>
