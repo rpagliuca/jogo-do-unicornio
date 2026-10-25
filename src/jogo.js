@@ -74,6 +74,39 @@ function som(nome) {
   });
 }
 
+// ---------- musiquinha de fundo: toque MIDI antigo, bem baixinho, em loop (C, Am, F, G)
+const MELODIA = [
+  72, 76, 79, 76, 74, 72, 74, 76, 76, 72, 69, 72, 76, 79, 77, 76,
+  77, 76, 74, 72, 69, 72, 74, 77, 79, 77, 76, 74, 71, 74, 76, 74,
+  72, 76, 79, 84, 83, 79, 76, 79, 81, 79, 76, 72, 76, 79, 81, 79,
+  77, 81, 79, 77, 76, 74, 72, 74, 76, 74, 71, 74, 72, 0, 72, 0,
+];
+const BAIXO = [48, 45, 41, 43, 48, 45, 41, 43];
+let musica = null, musicaProx = 0, musicaPasso = 0;
+function nota(midi, t, dur, tipo, vol) {
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = tipo; o.frequency.value = 440 * 2 ** ((midi - 69) / 12);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0005, t + dur);
+  o.connect(g).connect(musica); o.start(t); o.stop(t + dur + 0.05);
+}
+function agendarMusica() {
+  if (!ac || ac.state !== 'running') return;
+  if (!musica) {
+    const filtro = ac.createBiquadFilter(); filtro.type = 'lowpass'; filtro.frequency.value = 2200;
+    musica = ac.createGain(); musica.connect(filtro).connect(ac.destination);
+    musicaProx = ac.currentTime + 0.1;
+  }
+  musica.gain.setTargetAtTime(mudo ? 0 : 0.5, ac.currentTime, 0.1);
+  if (musicaProx < ac.currentTime - 0.5) musicaProx = ac.currentTime + 0.05; // a aba ficou parada
+  const colcheia = 60 / 96 / 2;
+  while (musicaProx < ac.currentTime + 0.4) {
+    const i = musicaPasso % MELODIA.length;
+    if (MELODIA[i]) nota(MELODIA[i], musicaProx, colcheia * 1.6, 'triangle', 0.05);
+    if (i % 2 === 0) nota(BAIXO[Math.floor(i / 8)] + [0, 7, 12, 7][(i % 8) / 2], musicaProx, colcheia * 1.8, 'square', 0.012);
+    musicaProx += colcheia; musicaPasso++;
+  }
+}
+
 // ---------- história
 const HISTORIA = [
   { cena: 'dia', quem: 'Menina', txt: 'Bom dia, cavalinho! Vamos passear?' },
@@ -424,6 +457,7 @@ function quadro(agora) {
   const dt = Math.min(0.05, (agora - ultimo) / 1000);
   ultimo = agora;
   atualizar(dt, lerEntrada());
+  agendarMusica();
   desenhar();
   requestAnimationFrame(quadro);
 }

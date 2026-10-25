@@ -15,7 +15,7 @@ Abra o `index.html` no Chrome (dois cliques no arquivo já funciona; nada para i
 | X | Espaço ou X | perto de uma nuvem de algodão-doce, pega um pedacinho; passa os diálogos |
 | ○ | C ou O | come um pedacinho da bolsinha: mais forte, mais colorido e +1 coração |
 | | F | tela cheia |
-| | M | liga e desliga o som |
+| | M | liga e desliga o som e a musiquinha |
 
 O controle aparece para o navegador depois que você aperta qualquer botão dele.
 O som só liga depois de um clique na tela ou de uma tecla do teclado (regra do navegador).
