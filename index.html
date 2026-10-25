@@ -28,6 +28,12 @@
   #controles .start { left: 50%; transform: translateX(-50%); top: calc(10px + env(safe-area-inset-top)); width: auto; height: 34px; border-radius: 17px; padding: 0 16px; font-size: 15px; }
   #controles .start.apertado { transform: translateX(-50%) scale(0.94); }
   #girar { display: none; }
+  /* aba História: só no site publicado e só na tela de abertura */
+  #aba-historia { display: none; position: fixed; top: calc(10px + env(safe-area-inset-top)); right: max(12px, env(safe-area-inset-right));
+    font: 700 16px "Pixelify Sans", "Courier New", monospace; color: #3b2412; background: #f8dfae; border: 3px solid #8a4b22;
+    border-radius: 8px; padding: 6px 12px; text-decoration: none; z-index: 1; }
+  body.site.titulo #aba-historia { display: block; }
+  #aba-historia:focus-visible { outline: 3px solid #ff8fc4; outline-offset: 2px; }
   @media (orientation: portrait) {
     body.toque #girar { display: flex; position: fixed; inset: 0; align-items: center; justify-content: center; text-align: center;
       background: #1b1525ee; color: #fff; font: 20px "Pixelify Sans", monospace; padding: 24px; z-index: 2; }
@@ -43,6 +49,7 @@
   <button class="o" data-botao="o" aria-label="Comer">○</button>
   <button class="x" data-botao="x" aria-label="Pegar">X</button>
 </div>
+<a id="aba-historia" href="historia.html">📖 História</a>
 <div id="girar">Vire o celular de lado para jogar 🦄</div>
 <script src="src/desenho.js"></script>
 <script src="src/fundos.js"></script>

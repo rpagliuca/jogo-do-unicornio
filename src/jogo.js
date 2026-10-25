@@ -452,6 +452,7 @@ function hud() {
   }
 }
 function desenhar() {
+  document.body.classList.toggle('titulo', modo === 'titulo');
   if (modo === 'titulo') desenharTitulo();
   else if (modo === 'historia') desenharHistoria();
   else if (modo === 'final') desenharFinal();
@@ -501,6 +502,7 @@ function quadro(agora) {
   desenhar();
   requestAnimationFrame(quadro);
 }
+if (location.protocol.startsWith('http')) document.body.classList.add('site'); // a aba História só existe no site
 prepararFundos();
 prepararCenas();
 ajustar();
@@ -509,7 +511,7 @@ const atalho = location.hash.slice(1);
 HISTORIA[3].txt = tutorial();
 if (/^nivel\d/.test(atalho)) {
   novaCorrida(); modo = 'jogo'; G.L = +atalho[5]; G.fundo = G.L; G.bolsa = 2;
-  for (let i = 0; i < 4; i++) { criar(i % 2 ? 'algodao' : DOCES[i]); G.objs[i].x = 70 + i * 34; }
-} else if (atalho.startsWith('final')) { modo = 'final'; }
+  for (let i = 0; i < 4; i++) { criar(i % 2 ? 'algodao' : DOCES[i]); G.objs[i].x = 100 + i * 28; G.objs[i].y = [30, 40, 78, 70][i]; }
+} else if (atalho.startsWith('final')) { modo = 'final'; letras = 999; }
 else if (/^historia\d/.test(atalho)) { modo = 'historia'; passo = +atalho[8]; tempo = 2; letras = 999; }
 requestAnimationFrame(quadro);

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>História do Jogo do Unicórnio</title>
+<meta name="description" content="Como a Sofia, de 7 anos, criou o Jogo do Unicórnio com o pai e com o Claude em uma tarde.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Mesma família visual do jogo: pergaminho e madeira do Stardew Valley, letra de pixel nos títulos. */
+:root{
+  --bg:#fdf5fa; --fg:#2d2240; --muted:#6c5d7e; --card:#ffffff; --line:#ecdcef; --accent:#c2448a;
+  --wood:#8a4b22; --parch:#f8dfae; --ink:#3b2412;
+  --f-game:"Pixelify Sans","Courier New",monospace; --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{--bg:#1b1525;--fg:#f4ebf8;--muted:#b9a9c9;--card:#251d32;--line:#3a2e4b;--accent:#ff8ccb;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 var(--f-body)}
+a{color:var(--accent)}
+.abas{position:sticky;top:0;z-index:5;background:var(--wood);box-shadow:0 3px 0 #5c3014}
+.abas .in{max-width:1040px;margin:0 auto;display:flex;gap:8px;align-items:center;padding:10px max(16px,env(safe-area-inset-left))}
+.abas a{font:700 17px var(--f-game);text-decoration:none;color:var(--ink);background:var(--parch);border-radius:8px;padding:6px 14px;border:2px solid #5c3014}
+.abas a.atual{background:#fff3d6;box-shadow:inset 0 -3px 0 var(--accent)}
+.abas .nome{margin-left:auto;font:600 15px var(--f-game);color:#ffe9c7}
+.wrap{max-width:1040px;margin:0 auto;padding:32px max(16px,env(safe-area-inset-right)) 72px max(16px,env(safe-area-inset-left));display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--f-game);line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:clamp(32px,6vw,52px)}
+h2{font-size:clamp(24px,3.6vw,32px)}
+h3{font-size:19px}
+p{margin:0;max-width:68ch}
+section{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font:600 13px var(--f-game);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{font-size:18px;color:var(--muted)}
+.tela{border-radius:6px;box-shadow:0 0 0 4px var(--wood),0 7px 0 4px #5c3014;display:block;width:100%;height:auto;image-rendering:pixelated}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:center}
+@media(max-width:780px){.hero{grid-template-columns:minmax(0,1fr)}}
+.hero .txt{display:flex;flex-direction:column;gap:16px}
+.botao{align-self:flex-start;font:700 20px var(--f-game);color:var(--ink);background:var(--parch);border:3px solid var(--wood);border-radius:10px;padding:10px 20px;text-decoration:none;box-shadow:0 4px 0 #5c3014}
+.botao:active{transform:translateY(2px);box-shadow:0 2px 0 #5c3014}
+.quem{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media(max-width:780px){.quem{grid-template-columns:minmax(0,1fr)}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box p{color:var(--muted)}
+.fluxo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font:600 15px var(--f-game)}
+.fluxo span.no{background:var(--parch);color:var(--ink);border:2px solid var(--wood);border-radius:8px;padding:6px 10px}
+.fluxo span.seta{color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+.tabela{overflow-x:auto}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 14px var(--f-game);color:var(--muted)}
+kbd{font:600 13px var(--f-game);background:var(--card);border:1px solid var(--line);border-bottom-width:3px;border-radius:5px;padding:0 6px;white-space:nowrap}
+.linha{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;border-left:3px solid var(--line);margin-left:58px}
+.linha li{position:relative;padding:0 0 20px 22px}
+.linha li::before{content:"";position:absolute;left:-8px;top:7px;width:13px;height:13px;border-radius:3px;background:var(--accent);box-shadow:0 0 0 3px var(--bg)}
+.linha time{position:absolute;left:-74px;top:2px;width:58px;text-align:right;font:600 14px var(--f-game);color:var(--muted);font-variant-numeric:tabular-nums}
+.linha b{font-family:var(--f-game);font-weight:600}
+.linha p{color:var(--muted)}
+.linha .marco::before{background:#5fd068}
+.pedidos{display:grid;gap:10px;counter-reset:p;padding:0;margin:0;list-style:none}
+.pedidos li{counter-increment:p;display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:baseline}
+.pedidos li::before{content:counter(p);font:700 18px var(--f-game);color:var(--accent);text-align:right}
+.pedidos q{color:var(--muted);font-style:italic}
+.galeria{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+@media(max-width:780px){.galeria{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.galeria{grid-template-columns:minmax(0,1fr)}}
+figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+figcaption{font-size:14px;color:var(--muted)}
+.versoes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px}
+@media(max-width:780px){.versoes{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.versoes img{width:100%;height:auto;border-radius:6px;border:1px solid var(--line)}
+.ficha{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px}
+.ficha dt{font:600 15px var(--f-game);color:var(--muted)}
+.ficha dd{margin:0}
+code{font-size:14px}
+footer{color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<nav class="abas"><div class="in">
+  <a href="index.html">🎮 Jogar</a>
+  <a href="historia.html" class="atual" aria-current="page">📖 História</a>
+  <span class="nome">Jogo criado por Sofia</span>
+</div></nav>
+
+<main class="wrap">
+  <header class="hero">
+    <div class="txt">
+      <span class="eyebrow">Domingo, 25 de outubro de 2026</span>
+      <h1>Jogo do Unicórnio</h1>
+      <p class="lead">A Sofia, de 7 anos, inventou um jogo numa tarde de domingo. O pai dela, Rafael, e o Claude ajudaram a transformar as ideias em desenhos, depois em código, e no fim todo mundo jogou na TV da sala.</p>
+      <a class="botao" href="index.html">▶ Jogar agora</a>
+    </div>
+    <img class="tela" src="prints/jogo-titulo.png" alt="Tela de abertura: arco-íris, o nome do jogo, Jogo criado por Sofia, e a menina correndo atrás do unicórnio" width="960" height="540">
+  </header>
+
+  <section id="historia">
+    <h2>A história do jogo</h2>
+    <p>Uma menina vive numa fazenda com o seu cavalo. Numa tarde aparece uma fada, que dá dois presentes ao cavalo: o poder de voar baixinho e uma bolsinha rosa.</p>
+    <p>Começa a corrida. No caminho aparecem doces gigantes, pirulitos, cupcakes, brigadeiros e barras de chocolate, e o cavalo precisa desviar de todos. Ele só pode comer as nuvens de algodão-doce: chega perto, pega um pedacinho com a pata e guarda na bolsinha. Quando quiser, come um pedacinho e fica mais forte e mais colorido, e ainda ganha de volta um coração de vida.</p>
+    <p>Cada pedacinho é uma cor nova: rosa, lilás, azul, verde, dourado e, no fim, arco-íris. Junto com as cores ele sobe. Só o começo é perto do chão; logo a fazenda fica pequena lá embaixo, depois só tem céu, depois estrelas, e no final aparece o arco-íris mais lindo do mundo.</p>
+  </section>
+
+  <section id="jogar">
+    <h2>Como jogar</h2>
+    <div class="tabela"><table>
+      <thead><tr><th>O que faz</th><th>Controle (DS4)</th><th>Teclado</th><th>Celular</th></tr></thead>
+      <tbody>
+        <tr><td>Começar, passar a história, pausar</td><td><kbd>OPTIONS</kbd></td><td><kbd>Enter</kbd></td><td><kbd>START</kbd> na tela</td></tr>
+        <tr><td>Subir e descer para desviar dos doces</td><td><kbd>▲</kbd> <kbd>▼</kbd> ou analógico</td><td>setas</td><td><kbd>▲</kbd> <kbd>▼</kbd></td></tr>
+        <tr><td>Perto de uma nuvem: pegar um pedacinho de algodão-doce</td><td><kbd>X</kbd></td><td><kbd>X</kbd> ou <kbd>Espaço</kbd></td><td><kbd>X</kbd></td></tr>
+        <tr><td>Comer um pedacinho da bolsinha</td><td><kbd>○</kbd></td><td><kbd>C</kbd></td><td><kbd>○</kbd></td></tr>
+      </tbody>
+    </table></div>
+    <p>O cavalo tem 5 corações. Cada trombada num doce tira um; se acabarem, ele volta a ser cavalo e recomeça do início. No computador, <kbd>F</kbd> põe em tela cheia e <kbd>M</kbd> desliga o som. No celular, deite o aparelho.</p>
+  </section>
+
+  <section id="processo">
+    <h2>Quem fez o quê</h2>
+    <div class="quem">
+      <div class="box"><h3>Sofia e Rafael</h3><p>Tiveram todas as ideias e tomaram todas as decisões: o tema, as regras, as cores, os doces. A Sofia desenhou a escala dos doces e testou o jogo na TV com o controle.</p></div>
+      <div class="box"><h3>Assistente de voz</h3><p>O Claude no app do celular. Ouvia o Rafael e a Sofia conversando e mandava cada pedido, por escrito, para a sessão que programava.</p></div>
+      <div class="box"><h3>Agente de programação</h3><p>O Claude no Claude Code, numa sessão registrada no rex, o sistema de tarefas do Rafael. Desenhou os key-frames, perguntou o que faltava decidir, escreveu o código e abriu o jogo na TV.</p></div>
+    </div>
+    <div class="fluxo" aria-label="Como os pedidos andavam">
+      <span class="no">Sofia e Rafael falam</span><span class="seta">→</span>
+      <span class="no">assistente de voz</span><span class="seta">→</span>
+      <span class="no">pedido por escrito</span><span class="seta">→</span>
+      <span class="no">desenhos ou código</span><span class="seta">→</span>
+      <span class="no">TV da sala</span><span class="seta">↺</span>
+    </div>
+    <p>Uma regra valeu a tarde toda: <strong>nada de código antes de a Sofia aprovar os desenhos.</strong> Primeiro vieram os key-frames, telas desenhadas do jogo que ainda não existia, refeitas várias vezes até ficar do jeito dela. Só depois da aprovação começou a programação.</p>
+  </section>
+
+  <section id="cronologia">
+    <h2>Cronologia</h2>
+    <p class="lead">Tudo aconteceu em pouco mais de uma hora e meia, no horário de Brasília. Os horários vêm do registro da sessão e dos commits.</p>
+    <ol class="linha">
+      <li><time>15:17</time><b>A tarefa começa.</b><p>O Rafael pede ao Claude ajuda para criar um jogo com a filha. A sessão de trabalho é aberta no rex.</p></li>
+      <li><time>15:20</time><b>A primeira ideia, por escrito.</b><p>Unicórnios. Uma pessoa tem um cavalo, uma fada o transforma num unicórnio rosa, que muda de cor ao ficar mais forte até virar arco-íris. Funciona com o controle DS4. Abertura com "Jogo do Unicórnio" e um arco-íris. Estilo parecido com o Stardew Valley. Desviar de doces. Feito em JavaScript, no navegador.</p></li>
+      <li><time>15:28</time><b>Key-frames, versão 1.</b><p>Nove telas desenhadas em pixel art, a história em oito passos e as seis cores. Ainda com o jogo visto de lado.</p></li>
+      <li><time>15:30</time><b>A Sofia escolhe o Stardew Valley.</b><p>O jogo passa a ter o chão em quadradinhos, os personagens de lado e sombra para mostrar a altura. O Rafael pede: "não programe ainda". Ganha uma seção de direção de arte.</p></li>
+      <li><time>15:40</time><b>O desenho a lápis da Sofia.</b><p>Em lápis roxo: o unicórnio pequeno voando perto de uma nuvem, um controle enorme cheio de doces e uma barra de chocolate. Daí saíram os doces gigantes como obstáculos e o desvio com cima e baixo. Ela decide também que o cavalo já voa baixinho desde o começo, que o cenário fica mais bonito conforme ele avança e que só as nuvens de algodão-doce dão força.</p></li>
+      <li><time>15:46</time><b>A bolsinha e a vida.</b><p>Perto da nuvem, um botão faz o cavalo ir até ela, pegar um pedacinho com a pata e guardar numa bolsinha bonitinha; outro botão come. E o unicórnio tem vida: cada trombada num doce tira um pouquinho.</p></li>
+      <li><time>15:50</time><b>Do chão ao céu, rápido.</b><p>Só o comecinho é perto do chão. Na segunda ou terceira cor ele já voa alto; da quarta em diante não há mais fazenda, só céu, estrelas e o arco-íris.</p></li>
+      <li class="marco"><time>15:55</time><b>Aprovado.</b><p>"A Sofia está muito satisfeita com o planejamento." O algodão-doce também devolve um coração. X pega, bolinha come. Pode programar.</p></li>
+      <li class="marco"><time>16:00</time><b>Primeira versão jogável.</b><p>História, corrida, doces, bolsinha, corações, sete cores e o final. Antes de entregar, um robô jogou uma partida inteira até o arco-íris para conferir as regras.</p></li>
+      <li><time>16:02</time><b>Na TV, com o controle.</b><p>O jogo é aberto no laptop ligado na TV, o controle DS4 é conectado por Bluetooth e a tela de abertura ganha um teste que mostra o botão apertado.</p></li>
+      <li><time>16:14</time><b>"A gente adorou o jogo!"</b><p>Primeiro pedido depois de jogar: escrever "Jogo criado por Sofia" na tela inicial.</p></li>
+      <li><time>16:17</time><b>Musiquinha.</b><p>Uma música de fundo bem baixinha, no estilo de toque MIDI antigo, tocada pelo próprio navegador.</p></li>
+      <li><time>16:21</time><b>A menina ganha o rosto da Sofia.</b><p>Um retrato em pixel art da Sofia vira a base da personagem: cabelo castanho comprido com franja, sorriso e blusa branca com flores.</p></li>
+      <li><time>16:22</time><b>Abertura com a menina brincando.</b><p>Em vez do retrato grande, a menina pequena corre atrás do unicórnio pela grama enquanto ninguém aperta START.</p></li>
+      <li class="marco"><time>16:45</time><b>Publicado.</b><p>Controles na tela para o celular, teclado para computador sem controle, o repositório no GitHub e esta página.</p></li>
+    </ol>
+  </section>
+
+  <section id="pedidos">
+    <h2>Os pedidos, um a um</h2>
+    <p>Depois da primeira mensagem, escrita pelo Rafael, todos os pedidos chegaram pela assistente de voz, ditados enquanto pai e filha conversavam. Aqui estão resumidos, com trechos das palavras deles.</p>
+    <ol class="pedidos">
+      <li><span>Criar um jogo de unicórnio com a fada, as cores até o arco-íris, o controle DS4 e o estilo do Stardew Valley; mostrar key-frames e roteiro para aprovar.</span></li>
+      <li><span><q>A Sofia escolheu: o jogo é visto de cima, parecido com o Stardew Valley.</q></span></li>
+      <li><span><q>Não programe ainda.</q> Refazer os key-frames e mostrar a direção artística.</span></li>
+      <li><span>A referência é sempre o Stardew Valley, sem usar outro nome para o estilo.</span></li>
+      <li><span>Começa como cavalo que já voa baixinho; o cenário fica mais bonito com mais nuvens e cores; a cor dele chega cada vez mais perto do arco-íris.</span></li>
+      <li><span>O desenho da Sofia: a figura grande é o controle, os doces são obstáculos e a caixa escrita "BARRA" é uma barra de chocolate. Desviar com cima e baixo.</span></li>
+      <li><span><q>A única coisa que o unicórnio pode comer e que deixa ele mais forte são nuvens de algodão-doce.</q></span></li>
+      <li><span>A bolsinha: um botão vai até a nuvem e pega um pedacinho com a pata; outro botão come quando ele quiser.</span></li>
+      <li><span><q>O unicórnio tem vida.</q> Cada trombada num doce tira um pouquinho; sem vida, volta para o início.</span></li>
+      <li><span>Só o comecinho é perto do chão; da quarta cor em diante, só céu, depois estrelas e o arco-íris.</span></li>
+      <li><span><q>Aprovado! A Sofia está muito satisfeita com o planejamento.</q> Pode começar a programação.</span></li>
+      <li><span>O algodão-doce também devolve um coração. X para pegar, bolinha para comer.</span></li>
+      <li><span>Abrir o jogo no laptop ligado na TV e testar com o DS4.</span></li>
+      <li><span>Confirmar que o controle está pareado e funcionando no jogo.</span></li>
+      <li><span><q>A gente adorou o jogo!</q> Colocar "Jogo criado por Sofia" na tela inicial.</span></li>
+      <li><span>Uma musiquinha de fundo bem baixinha e agradável, no estilo de toque MIDI antigo.</span></li>
+      <li><span>Usar um retrato em pixel art da Sofia como base para a personagem menina.</span></li>
+      <li><span>O Rafael colou a imagem direto na sessão de programação.</span></li>
+      <li><span>Na abertura, nada de retrato grande: a personagem pequena brincando com o cavalo, como animação de espera.</span></li>
+      <li><span>Publicar no GitHub, funcionar no celular e no teclado, e contar o processo numa página.</span></li>
+      <li><span>O endereço principal abre o jogo, e uma aba "História" conta todo o resto.</span></li>
+    </ol>
+  </section>
+
+  <section id="planejamento">
+    <h2>Os key-frames, versão por versão</h2>
+    <p>O planejamento foi uma página com as telas do jogo desenhadas antes do código. Cada ideia da Sofia virava uma versão nova. <a href="planejamento.html">Ver a versão final aprovada</a>.</p>
+    <div class="versoes">
+      <figure><img src="prints/planejamento-v1.png" alt="Versão 1 dos key-frames, com o jogo visto de lado" loading="lazy" width="550" height="750"><figcaption>15:28 · Primeira ideia, vista de lado</figcaption></figure>
+      <figure><img src="prints/planejamento-v3.png" alt="Versão no estilo do Stardew Valley" loading="lazy" width="550" height="750"><figcaption>15:32 · Estilo Stardew Valley</figcaption></figure>
+      <figure><img src="prints/planejamento-v5.png" alt="Versão com doces gigantes e algodão-doce" loading="lazy" width="550" height="750"><figcaption>15:45 · Doces gigantes do desenho da Sofia</figcaption></figure>
+      <figure><img src="prints/planejamento-v7.png" alt="Versão com a bolsinha e os corações" loading="lazy" width="550" height="750"><figcaption>15:47 · Bolsinha e corações</figcaption></figure>
+      <figure><img src="prints/planejamento-v8.png" alt="Versão aprovada, do chão ao céu" loading="lazy" width="550" height="750"><figcaption>15:52 · Do chão ao céu, aprovada</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="prints">
+    <h2>Prints do jogo</h2>
+    <div class="galeria">
+      <figure><img class="tela" src="prints/jogo-historia0.png" alt="A fazenda: a menina chama o cavalo para passear" loading="lazy" width="960" height="540"><figcaption>A fazenda</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-historia1.png" alt="A fada aparece no fim da tarde" loading="lazy" width="960" height="540"><figcaption>A fada aparece</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-historia2.png" alt="O cavalo ganha o poder de voar e a bolsinha" loading="lazy" width="960" height="540"><figcaption>O presente da fada</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-nivel0.png" alt="O cavalo marrom voando baixinho pela trilha entre doces gigantes" loading="lazy" width="960" height="540"><figcaption>Começo: voando baixinho</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-nivel1.png" alt="O unicórnio rosa na trilha" loading="lazy" width="960" height="540"><figcaption>Rosa, ainda perto do chão</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-nivel2.png" alt="O unicórnio lilás voando alto sobre a fazenda" loading="lazy" width="960" height="540"><figcaption>Lilás: a fazenda lá embaixo</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-nivel4.png" alt="O unicórnio verde no céu com balões" loading="lazy" width="960" height="540"><figcaption>Verde: só céu</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-nivel5.png" alt="O unicórnio dourado entre as estrelas" loading="lazy" width="960" height="540"><figcaption>Dourado: estrelas</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-nivel6.png" alt="O unicórnio arco-íris diante de um arco-íris duplo" loading="lazy" width="960" height="540"><figcaption>Arco-íris: força máxima</figcaption></figure>
+      <figure><img class="tela" src="prints/jogo-final.png" alt="Final: a menina, a fada e o unicórnio arco-íris na fazenda" loading="lazy" width="960" height="540"><figcaption>Final</figcaption></figure>
+      <figure><img class="tela" src="prints/celular.png" alt="O jogo no celular, com botões na tela" loading="lazy" width="844" height="390"><figcaption>No celular, com botões na tela</figcaption></figure>
+      <figure><img class="tela" src="prints/na-tv.jpg" alt="Imagem da TV da sala com a tela de abertura" loading="lazy" width="960" height="540"><figcaption>Na TV da sala, durante o teste</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="tecnica">
+    <h2>Por dentro</h2>
+    <div class="quem">
+      <div class="box"><h3>Sem imagens</h3><p>Todo o desenho é feito por código, ponto a ponto, numa tela de 192×108 ampliada para a TV. Não há nenhum arquivo de imagem no jogo.</p></div>
+      <div class="box"><h3>Só o navegador</h3><p>HTML e JavaScript puro, cerca de 900 linhas, sem nada para instalar. O controle vem da Gamepad API e a música e os efeitos são gerados pela Web Audio.</p></div>
+      <div class="box"><h3>Como foi testado</h3><p>Capturas de cada tela num Chrome sem janela, uma partida inteira jogada por um robô e, no fim, a Sofia com o controle na mão.</p></div>
+    </div>
+  </section>
+
+  <section id="ia">
+    <h2>O modelo de IA</h2>
+    <dl class="ficha">
+      <dt>Programação</dt><dd>Claude Opus 5.5 (<code>claude-opus-5-5</code>) no Claude Code</dd>
+      <dt>Esforço</dt><dd>Médio (medium), o nível de raciocínio escolhido para a sessão</dd>
+      <dt>Assistente de voz</dt><dd>O Claude no app do celular, que recebia as falas e repassava os pedidos</dd>
+      <dt>Registro</dt><dd>Uma tarefa e uma sessão de trabalho no rex, o sistema de tarefas do Rafael, com diário de cada passo</dd>
+      <dt>Duração</dt><dd>Cerca de uma hora e meia, do primeiro pedido à publicação</dd>
+    </dl>
+  </section>
+
+  <footer>Jogo criado por Sofia, com o Rafael e o Claude · <a href="https://github.com/rpagliuca/jogo-do-unicornio">código no GitHub</a></footer>
+</main>
+</body>
+</html>

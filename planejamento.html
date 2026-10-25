@@ -1,0 +1,455 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planejamento do Jogo do Unicórnio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap">
+<style>
+/* Layout: a tela de abertura do jogo como capa, depois a história, os key-frames em grade, a escada de cores e os controles. */
+:root{
+  --bg:#fdf5fa; --fg:#2d2240; --muted:#6c5d7e; --card:#ffffff; --line:#ecdcef; --accent:#c2448a;
+  --wood:#8a4b22; --parch:#f8dfae; --ink:#3b2412;
+  --f-game:"Pixelify Sans", "Courier New", monospace;
+  --f-body:"Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1525; --fg:#f4ebf8; --muted:#b9a9c9; --card:#251d32; --line:#3a2e4b; --accent:#ff8ccb; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#1b1525; --fg:#f4ebf8; --muted:#b9a9c9; --card:#251d32; --line:#3a2e4b; --accent:#ff8ccb; color-scheme:dark;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:16px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:48px}
+h1,h2,h3{font-family:var(--f-game);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(28px,5vw,44px)}
+h2{font-size:clamp(22px,3.4vw,30px)}
+h3{font-size:19px}
+p{margin:0}
+.eyebrow{font-family:var(--f-game);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--muted);max-width:62ch}
+section{display:flex;flex-direction:column;gap:18px}
+
+/* telas */
+.screen{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;container-type:inline-size;border-radius:6px;overflow:hidden;background:#000;box-shadow:0 0 0 4px var(--wood),0 8px 0 4px #5c3014}
+.screen canvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;image-rendering:crisp-edges}
+.ov{position:absolute;font-family:var(--f-game);color:#fff}
+.title-ov{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2cqw;padding-bottom:8cqw}
+.title-ov .t{font-size:8.4cqw;font-weight:700;color:#fff;text-shadow:0.6cqw 0.6cqw 0 #b0367a,-0.3cqw -0.3cqw 0 #6b2d8f;letter-spacing:.02em;text-align:center;line-height:1}
+.title-ov .s{font-size:3.2cqw;color:#5b2a7a;background:#fff8;padding:.4cqw 1.6cqw;border-radius:.6cqw;animation:pisca 1.1s steps(2) infinite}
+@keyframes pisca{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.title-ov .s{animation:none}}
+.dlg{left:4%;right:4%;bottom:4%;background:var(--parch);color:var(--ink);border:0.7cqw solid var(--wood);box-shadow:inset 0 0 0 0.4cqw #fff3d6;border-radius:0.8cqw;padding:1.4cqw 2.2cqw;font-size:3.1cqw;line-height:1.25}
+.dlg b{color:#a03a6c}
+.hud{top:3%;left:3%;right:3%;display:flex;justify-content:space-between;align-items:flex-start;font-size:2.8cqw;text-shadow:0.25cqw 0.25cqw 0 #0008}
+.forca{display:flex;align-items:center;gap:0.6cqw;background:#0005;padding:0.6cqw 1cqw;border-radius:0.6cqw}
+.forca i{display:block;width:3cqw;height:2.2cqw;border:0.3cqw solid #fff;background:#fff2;border-radius:.3cqw}
+.forca i.on{background:var(--c)}
+.left{display:flex;flex-direction:column;align-items:flex-start;gap:0.8cqw}
+.vida b{font-family:system-ui,sans-serif;font-size:3cqw;line-height:1;color:#ffffff55}
+.vida b.on{color:#ff4d6d}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:0.8cqw}
+.bolsa{display:flex;align-items:center;gap:0.8cqw}
+.bolsa i{display:block;width:2.4cqw;height:2.4cqw;border-radius:50%;background:#ff8fc4;box-shadow:0 0 0 0.3cqw #a03a6c}
+.key{position:absolute;font-family:var(--f-game);font-size:4cqw;color:#fff;background:#2d2240;border:0.5cqw solid #fff;border-radius:50%;width:8cqw;height:8cqw;display:flex;align-items:center;justify-content:center;box-shadow:0 0.5cqw 0 #0006}
+.dist{background:#0005;padding:0.6cqw 1.2cqw;border-radius:0.6cqw}
+.big{inset:0;display:flex;align-items:center;justify-content:center;font-size:7cqw;font-weight:700;text-shadow:0.5cqw 0.5cqw 0 #7a2e8c;padding-top:22cqw}
+.oops{left:50%;top:34%;transform:translateX(-50%);font-size:4.2cqw;font-weight:700;background:#fff;color:#a03a6c;padding:0.8cqw 2cqw;border-radius:1cqw;border:0.5cqw solid #a03a6c;white-space:nowrap}
+
+.hero{display:flex;flex-direction:column;gap:16px}
+.frames{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:36px 28px}
+@media (max-width:720px){.frames{grid-template-columns:minmax(0,1fr)}}
+.frame{display:flex;flex-direction:column;gap:12px;min-width:0}
+.frame .cap{display:flex;flex-direction:column;gap:4px;padding-top:8px}
+.frame .n{font-family:var(--f-game);color:var(--accent);font-size:14px}
+.frame p{color:var(--muted)}
+.frame .ctl{font-size:14px;color:var(--fg)}
+kbd{font-family:var(--f-game);font-size:13px;background:var(--card);border:1px solid var(--line);border-bottom-width:3px;border-radius:5px;padding:0 6px}
+
+.story{display:grid;gap:10px;padding:0;margin:0;list-style:none;counter-reset:s;max-width:70ch}
+.story li{counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:baseline}
+.story li::before{content:counter(s);font-family:var(--f-game);color:var(--accent);font-size:18px;text-align:right}
+
+.levels{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+@media (max-width:820px){.levels{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.lv{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.lv canvas{width:100%;aspect-ratio:34/30;image-rendering:pixelated;background:#bfe6ff;border-radius:6px}
+.lv b{font-family:var(--f-game);font-size:16px}
+.lv span{font-size:13px;color:var(--muted);line-height:1.35}
+
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+@media (max-width:720px){.cols{grid-template-columns:minmax(0,1fr)}}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.box ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:center}
+.prog{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.prog{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.prog.five{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:820px){.prog.five{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.prog.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:820px){.prog.three{grid-template-columns:minmax(0,1fr)}}
+.prog figcaption b{color:var(--fg)}
+.prog figure{margin:0;display:flex;flex-direction:column;gap:10px;min-width:0}
+.prog figcaption{font-size:13px;color:var(--muted)}
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.sw{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);min-width:0}
+.sw i{flex:none;width:28px;height:28px;border-radius:4px;background:var(--c);box-shadow:inset 0 0 0 1px #0002}
+.decide li{color:var(--fg)}
+.decide li em{color:var(--muted);font-style:normal}
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Roteiro para aprovar · versão 8 · estilo Stardew Valley</div>
+    <div class="screen"><canvas id="f1" width="192" height="108"></canvas>
+      <div class="ov title-ov"><div class="t">Jogo do Unicórnio</div><div class="s">Aperte START</div></div>
+    </div>
+    <p class="lead">Uma menina, o cavalo dela e uma fada. O cavalo ganha o poder de voar baixinho, desvia de doces gigantes e come nuvens de algodão-doce, que deixam ele mais forte e mais colorido, até virar arco-íris. Abaixo estão as telas principais desenhadas no estilo do jogo e a ordem em que tudo acontece.</p>
+  </header>
+
+  <section>
+    <h2>A história</h2>
+    <ol class="story">
+      <li><span>Tela de abertura com o nome do jogo e um arco-íris no fundo. Aperta START.</span></li>
+      <li><span>Na fazenda, a menina chama o cavalo dela para passear.</span></li>
+      <li><span>No fim da tarde aparece uma fada brilhando no céu.</span></li>
+      <li><span>A fada dá dois presentes: o poder de voar baixinho e uma bolsinha rosa. O cavalo continua marrom.</span></li>
+      <li><span>Começa a corrida pela trilha. Doces gigantes aparecem no caminho: pirulito, cupcake, brigadeiro e barra de chocolate. Com cima e baixo no controle, ele desvia.</span></li>
+      <li><span>Nuvens de algodão-doce flutuam pelo caminho: são a única coisa que ele pode comer. Perto de uma nuvem, aperta X e ele vai até ela, pega um pedacinho com a pata e guarda na bolsinha. Quando quiser, aperta ○ e come um pedacinho. Cada pedacinho comido deixa ele mais forte e mais colorido: vira unicórnio rosa e a cor fica cada vez mais parecida com o arco-íris. Logo na segunda ou terceira cor ele já voa alto sobre a fazenda; na quarta e na quinta já está no céu, só com nuvens e depois estrelas.</span></li>
+      <li><span>Cada trombada num doce tira um pouquinho de vida (um dos 5 corações). Se a vida acabar, ele volta a ser cavalo e recomeça do início do jogo.</span></li>
+      <li><span>No final ele vira arco-íris e aparece o arco-íris mais lindo do mundo.</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Key-frames</h2>
+    <div class="frames">
+      <div class="frame">
+        <div class="screen"><canvas id="f2" width="192" height="108"></canvas>
+          <div class="ov dlg"><b>Menina:</b> Bom dia, cavalinho! Vamos passear?</div></div>
+        <div class="cap"><span class="n">Tela 2</span><h3>A fazenda</h3>
+          <p>Casa, cerca e árvores no estilo de Stardew Valley. A menina está ao lado do cavalo marrom. Uma caixa de diálogo conta a história.</p>
+          <span class="ctl"><kbd>X</kbd> passa o diálogo</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f3" width="192" height="108"></canvas>
+          <div class="ov dlg"><b>Fada:</b> Que cavalinho corajoso! Vou te dar um presente mágico.</div></div>
+        <div class="cap"><span class="n">Tela 3</span><h3>A fada aparece</h3>
+          <p>O céu fica de fim de tarde, aparecem estrelas e a fada desce brilhando com a varinha.</p>
+          <span class="ctl"><kbd>X</kbd> passa o diálogo</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f4" width="192" height="108"></canvas>
+          <div class="ov dlg"><b>Fada:</b> Agora você voa! Leve esta bolsinha para guardar algodão-doce.</div></div>
+        <div class="cap"><span class="n">Tela 4</span><h3>O presente da fada</h3>
+          <p>Uma explosão de brilhos, o cavalo sai do chão e ganha a bolsinha rosa. Ele continua marrom: as cores vêm depois, com o algodão-doce.</p>
+          <span class="ctl"><kbd>X</kbd> começa a corrida</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f5" width="192" height="108"></canvas><div class="ov hud" id="h5"></div></div>
+        <div class="cap"><span class="n">Tela 5</span><h3>Começo: voando baixinho</h3>
+          <p>Ainda cavalo, ele voa baixinho pela trilha. Os doces são gigantes, maiores que ele, como no desenho da Sofia. À frente, a primeira nuvem de algodão-doce. O cenário começa simples, com poucas flores.</p>
+          <span class="ctl"><kbd>▲</kbd> <kbd>▼</kbd> desvia</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f6" width="192" height="108"></canvas><div class="ov hud" id="h6"></div></div>
+        <div class="cap"><span class="n">Tela 6</span><h3>Pegando algodão-doce</h3>
+          <p>Já azul, ele voa alto e a fazenda ficou pequena lá embaixo. Passou perto de uma nuvem e pega um pedacinho com a pata para a bolsinha, que já tem 2. Os doces gigantes também flutuam aqui em cima.</p>
+          <span class="ctl"><kbd>X</kbd> pega um pedacinho · <kbd>○</kbd> come</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f7" width="192" height="108"></canvas><div class="ov hud" id="h7"></div><div class="ov oops">Ai! −1 ♥</div></div>
+        <div class="cap"><span class="n">Tela 7</span><h3>Trombou num doce</h3>
+          <p>Lilás, já voando alto. Ele tem 5 corações de vida. Cada trombada num doce tira um. Se acabarem todos, ele volta a ser cavalo e recomeça do início do jogo.</p>
+          <span class="ctl"><kbd>▲</kbd> <kbd>▼</kbd> desvia do próximo</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f8" width="192" height="108"></canvas><div class="ov hud" id="h8"></div><div class="ov big">FORÇA MÁXIMA!</div></div>
+        <div class="cap"><span class="n">Tela 8</span><h3>Unicórnio arco-íris</h3>
+          <p>Com a força toda, ele fica arco-íris e deixa um rastro colorido. Não há mais chão: só o céu e o arco-íris mais lindo do mundo.</p>
+          <span class="ctl"><kbd>▲</kbd> <kbd>▼</kbd> voa até as nuvens</span></div>
+      </div>
+      <div class="frame">
+        <div class="screen"><canvas id="f9" width="192" height="108"></canvas>
+          <div class="ov dlg"><b>Fada:</b> Você conseguiu! Agora é o unicórnio mais forte do arco-íris.</div></div>
+        <div class="cap"><span class="n">Tela 9</span><h3>Final</h3>
+          <p>A menina, a fada e o unicórnio arco-íris de volta à fazenda, debaixo do arco-íris mais lindo do mundo, duplo e cheio de brilhos.</p>
+          <span class="ctl"><kbd>START</kbd> joga de novo</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Direção de arte</h2>
+    <p class="lead">A referência é o Stardew Valley: uma fazenda colorida e aconchegante, desenhada pixel por pixel.</p>
+    <div class="cols">
+      <div class="box">
+        <h3>Como o mundo é desenhado</h3>
+        <ul>
+          <li>O chão é feito de quadradinhos de grama, terra e água. Casas, árvores, cercas e personagens aparecem de lado, como no Stardew Valley.</li>
+          <li>Perto do chão, todo personagem e objeto tem sombra, e quanto mais longe dela, mais alto o unicórnio está. Lá no alto a fazenda fica pequena, e depois só há céu, estrelas e o arco-íris.</li>
+          <li>Pixel art em 192×108 pontos, ampliada sem borrar. Cada personagem tem uns 14 pontos de altura.</li>
+          <li>As cores são de dia, claras e alegres. No fim da tarde tudo fica laranja e roxo, e a magia aparece como brilhos em forma de cruz.</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>Tela e letras</h3>
+        <ul>
+          <li>Diálogos numa caixa de pergaminho com moldura de madeira, igual às conversas do Stardew Valley.</li>
+          <li>Letra de pixel, grande para a Sofia ler na TV.</li>
+          <li>No canto, a barra de força com as 6 cores, os 5 corações de vida, a distância em metros e quantos pedacinhos há na bolsinha.</li>
+          <li>Doces gigantes, maiores que o unicórnio, como no desenho da Sofia, com sombra no chão como todo o resto.</li>
+          <li>Algodão-doce em rosa, lilás e azul claros e sempre brilhando, para ela reconhecer de longe o que pode comer.</li>
+          <li>A bolsinha rosa aparece no corpo dele o tempo todo, e no canto da tela um contador mostra quantos pedacinhos ela tem.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pal" id="pal"></div>
+  </section>
+
+  <section>
+    <h2>Os doces</h2>
+    <p class="lead">Como no desenho da Sofia, os doces são gigantes perto do unicórnio. Pirulito, cupcake, brigadeiro e barra de chocolate são obstáculos: é preciso desviar. A nuvem de algodão-doce, no alto à direita, é a única coisa que ele pode comer: ele pega pedacinhos dela e guarda na bolsinha.</p>
+    <div class="screen"><canvas id="dc" width="192" height="108"></canvas></div>
+  </section>
+
+  <section>
+    <h2>A bolsinha de algodão-doce</h2>
+    <p class="lead">A fada dá ao cavalo uma bolsinha rosa, que ele carrega o jogo todo. Ele guarda pedacinhos de nuvem nela e come quando quiser.</p>
+    <div class="prog three">
+      <figure><div class="screen"><canvas id="b1" width="192" height="108"></canvas><div class="key" style="right:8%;bottom:10%">X</div></div><figcaption><b>1. Passou perto de uma nuvem:</b> aperta X e ele vai sozinho até ela.</figcaption></figure>
+      <figure><div class="screen"><canvas id="b2" width="192" height="108"></canvas></div><figcaption><b>2. Pega um pedacinho com a pata</b> e guarda na bolsinha. O contador da bolsinha sobe.</figcaption></figure>
+      <figure><div class="screen"><canvas id="b3" width="192" height="108"></canvas><div class="key" style="right:8%;bottom:10%">○</div></div><figcaption><b>3. Na hora que quiser,</b> aperta ○ e come um pedacinho: fica mais forte e mais colorido.</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>Do chão ao céu</h2>
+    <p class="lead">Só o comecinho é perto do chão. Já na segunda ou terceira cor ele voa alto e a fazenda fica pequena lá embaixo. Na quarta cor não há mais trilha nem fazenda, só céu com nuvens, balões e passarinhos. Na quinta vêm as estrelas e, no fim, o arco-íris mais lindo do mundo.</p>
+    <div class="prog five">
+      <figure><div class="screen"><canvas id="p0" width="192" height="108"></canvas></div><figcaption><b>Cavalo e rosa:</b> perto do chão, na trilha</figcaption></figure>
+      <figure><div class="screen"><canvas id="p1" width="192" height="108"></canvas></div><figcaption><b>Lilás e azul:</b> voando alto sobre a fazenda</figcaption></figure>
+      <figure><div class="screen"><canvas id="p2" width="192" height="108"></canvas></div><figcaption><b>Verde:</b> só céu, nuvens e balões</figcaption></figure>
+      <figure><div class="screen"><canvas id="p3" width="192" height="108"></canvas></div><figcaption><b>Dourado:</b> entre as estrelas</figcaption></figure>
+      <figure><div class="screen"><canvas id="p4" width="192" height="108"></canvas></div><figcaption><b>Arco-íris:</b> o arco-íris mais lindo do mundo</figcaption></figure>
+    </div>
+  </section>
+
+  <section>
+    <h2>As cores da força</h2>
+    <p class="lead">Ele começa como cavalo e já voa baixinho. Cada pedacinho de algodão-doce comido da bolsinha sobe um nível: voa mais alto e a crina e o rabo ganham mais uma cor do arco-íris, até ficar todo arco-íris. Logo na segunda cor ele já sai de perto do chão.</p>
+    <div class="levels" id="levels"></div>
+  </section>
+
+  <section class="cols">
+    <div class="box">
+      <h3>Controle DS4</h3>
+      <div class="keys">
+        <kbd>OPTIONS</kbd><span>START: começa e pausa</span>
+        <kbd>▲ ▼</kbd><span>direcional ou analógico: sobe e desce para desviar dos doces</span>
+        <kbd>X</kbd><span>perto de uma nuvem: vai até ela e pega um pedacinho; também passa os diálogos</span>
+        <kbd>○</kbd><span>come um pedacinho da bolsinha</span>
+        <kbd>Teclado</kbd><span>Enter e setas fazem o mesmo, para testar sem o controle</span>
+      </div>
+    </div>
+    <div class="box">
+      <h3>Como vai ser feito</h3>
+      <ul>
+        <li>Um arquivo <code>index.html</code> e JavaScript puro, desenhando num canvas. Nada para instalar nem compilar.</li>
+        <li>O controle DS4 por Bluetooth é lido pela Gamepad API do navegador, no Chrome do laptop-2023.</li>
+        <li>Pixel art em baixa resolução (192×108) ampliada para a tela, como nestes desenhos.</li>
+        <li>Abre direto do arquivo ou na TV pelo laptop.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="box decide">
+    <h3>Ainda para decidir</h3>
+    <ul>
+      <li><em>Decidido pela Sofia: estilo do Stardew Valley; doces gigantes como obstáculos; cima e baixo para desviar; só come nuvens de algodão-doce, guardadas em pedacinhos numa bolsinha e comidas na hora que ela quiser.</em></li>
+      <li><em>Decidido pela Sofia: ele tem vida; cada trombada num doce tira um pouquinho e, sem vida, volta ao início.</em></li>
+      <li>Botões: X pega o pedacinho e ○ come. Ela prefere outros?</li>
+      <li>Comer algodão-doce também devolve vida, ou só deixa mais forte e colorido?</li>
+      <li>A menina monta no unicórnio durante a corrida ou ele corre sozinho?</li>
+      <li>Nomes da menina, do cavalo e da fada.</li>
+      
+    </ul>
+  </section>
+</div>
+
+<script>
+const W=192,H=108;
+const RAIN=['#ff5a5a','#ff9f43','#ffe14d','#5fd068','#4aa8ff','#a46bff'];
+const LV=[
+  {n:'Rosa',b:'#f9a8cc',m:['#e2589a'],a:'Ainda perto do chão'},
+  {n:'Lilás',b:'#d9b5f7',m:['#8a55d8','#ff5a5a'],a:'Já voa alto: a fazenda fica lá embaixo'},
+  {n:'Azul',b:'#b0d8ff',m:['#3a78dd','#ff5a5a','#ffe14d'],a:'Bem alto, por cima das nuvens baixas'},
+  {n:'Verde',b:'#bdeeb5',m:['#3a9f55','#ff5a5a','#ffe14d','#4aa8ff'],a:'Só céu: nuvens, balões e passarinhos'},
+  {n:'Dourado',b:'#ffe9a8',m:['#df961a','#ff5a5a','#5fd068','#4aa8ff','#a46bff'],a:'Voa entre as estrelas'},
+  {n:'Arco-íris',b:'#fff6fb',m:['#ff5a5a','#ff9f43','#ffe14d','#5fd068','#4aa8ff','#a46bff'],a:'Chega ao arco-íris: força máxima'}
+];
+let seed=7;function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
+function px(c,x,y,w,h,col){c.fillStyle=col;c.fillRect(Math.round(x),Math.round(y),w,h)}
+function disc(c,cx,cy,r,col){for(let y=-r;y<=r;y++){const w=Math.floor(Math.sqrt(r*r-y*y+r*.6));px(c,cx-w,cy+y,w*2+1,1,col)}}
+function sprite(c,rows,x,y,pal){rows.forEach((r,j)=>{for(let i=0;i<r.length;i++){const v=pal[r[i]];if(!v)continue;c.fillStyle=typeof v==='function'?v(i,j):v;c.fillRect(Math.round(x)+i,Math.round(y)+j,1,1)}})}
+function sky(c,cols,h=H){const bh=Math.ceil(h/cols.length);cols.forEach((col,i)=>px(c,0,i*bh,W,i===cols.length-1?H:bh,col))}
+function hills(c,base,amp,f,ph,col){for(let x=0;x<W;x++){const y=base-amp*Math.sin(x*f+ph);px(c,x,y,1,H-y,col)}}
+function ground(c,gy,g='#6cc04a',gd='#4e9a38',d='#b77b45',dd='#9a6233'){px(c,0,gy,W,H-gy,d);px(c,0,gy,W,4,g);px(c,0,gy+4,W,1,gd);seed=11;for(let i=0;i<40;i++)px(c,rnd()*W,gy+6+rnd()*(H-gy-7),2,1,dd);for(let x=2;x<W;x+=7)px(c,x,gy-1,1,1,g)}
+function cloud(c,x,y,col='#ffffff'){disc(c,x,y,4,col);disc(c,x+6,y-2,5,col);disc(c,x+12,y,4,col);px(c,x,y,13,4,col)}
+function tree(c,x,gy){px(c,x-1,gy-10,3,10,'#7a4a26');disc(c,x,gy-15,7,'#3d8b3a');disc(c,x-2,gy-17,4,'#56a64a');px(c,x+3,gy-13,1,1,'#ff6b6b');px(c,x-4,gy-12,1,1,'#ff6b6b')}
+function fence(c,x,gy,len){px(c,x,gy-7,len,1,'#a8703a');px(c,x,gy-4,len,1,'#a8703a');for(let i=0;i<=len-2;i+=6){px(c,x+i,gy-9,2,9,'#7d4f24');px(c,x+i,gy-9,2,1,'#c08848')}}
+function house(c,x,gy){px(c,x,gy-22,32,22,'#c98b5a');for(let y=gy-19;y<gy;y+=3)px(c,x,y,32,1,'#b0764a');for(let k=0;k<12;k++)px(c,x-3+k,gy-22-k,38-2*k,1,k%2?'#b8433f':'#a0382f');px(c,x+12,gy-12,7,12,'#6b3a1f');px(c,x+17,gy-6,1,1,'#ffd34d');px(c,x+23,gy-17,6,6,'#ffe9a8');px(c,x+25,gy-17,1,6,'#b0764a');px(c,x+3,gy-17,6,6,'#ffe9a8');px(c,x+5,gy-17,1,6,'#b0764a');px(c,x+24,gy-37,4,6,'#8a4b3a')}
+function flowers(c,gy){seed=3;for(let i=0;i<14;i++){const x=rnd()*W;px(c,x,gy+1,1,1,['#ff8fc4','#fff36b','#ffffff'][i%3])}}
+function rock(c,x,gy){disc(c,x,gy-3,4,'#8f8f9c');px(c,x-4,gy-1,9,1,'#6f6f7c');px(c,x-2,gy-5,2,1,'#b6b6c4')}
+function log(c,x,gy){px(c,x,gy-6,16,6,'#8a5a2c');px(c,x,gy-6,16,1,'#a8703a');disc(c,x+16,gy-3,3,'#c99a5e');px(c,x+16,gy-3,1,1,'#8a5a2c')}
+function sparkle(c,x,y,col='#fffbd0'){px(c,x,y-1,1,3,col);px(c,x-1,y,3,1,col)}
+function stars(c,n,maxY){seed=21;for(let i=0;i<n;i++)px(c,rnd()*W,rnd()*maxY,1,1,i%4?'#fff6d6':'#ffffff')}
+function rainbowArc(c,cx,cy,ro,band){for(let y=0;y<=cy;y++)for(let x=0;x<W;x++){const d=Math.hypot(x-cx,y-cy);const i=Math.floor((ro-d)/band);if(i>=0&&i<6)px(c,x,y,1,1,RAIN[i])}}
+function trail(c,x0,x1,y,amp=1){for(let x=x0;x<x1;x++){const o=Math.round(Math.sin(x*.18)*amp);for(let k=0;k<6;k++)px(c,x,y+k*1+o,1,1,RAIN[k])}}
+
+const HORSE=[
+"..................d.d...",
+".................dbbbb..",
+"................ddbkbbb.",
+"...............ddbbbbbbb",
+"..............ddbbbbbbnb",
+".............ddbbb......",
+"dd..........ddbbbb......",
+"ddbbbbbbbbbbbbbbbb......",
+"d.bbbbbbbbbbbbbbbb......",
+"d.bbbbbbbbbbbbbbbb......",
+"..bbbbbbbbbbbbbbb.......",
+"..bb.bb......bb.bb......",
+"..bb.bb......bb.bb......",
+"..ff.ff......ff.ff......"];
+const HORSE_JUMP=HORSE.slice(0,11).concat([
+".bb...bb...bb...bb......",
+"bb.....bb.bb.....bb.....",
+"ff......ffff......ff...."]);
+function horse(c,x,y,lv,jump){
+  let b='#a8693c',d='#5a3418',f='#3f2614',k='#2a1a12';
+  if(lv!=null){const L=LV[lv],m=L.m;b=L.b;d=m.length>1?(i,j)=>m[(j+i)%m.length]:m[0];f=m[0];k='#3a1640'}
+  sprite(c,jump?HORSE_JUMP:HORSE,x,y,{b,d,f,k,n:k});
+  if(lv!=null||jump)bag(c,x,y);
+  if(lv!=null){[[20,-1],[21,-2],[22,-3]].forEach(([i,j],t)=>px(c,x+i,y+j,1,1,t%2?'#fff3b0':'#ffc93a'))}
+}
+const BAG=[".bbb.","bpppb","bpwpb","bpppb",".bbb."];
+function bag(c,x,y){px(c,x+9,y+7,7,1,'#8a4b22');sprite(c,BAG,x+7,y+8,{b:'#a03a6c',p:'#ff8fc4',w:'#ffffff'})}
+function piece(c,x,y){disc(c,x,y,2,'#ffc4e1');px(c,x-1,y-1,1,1,'#ffffff')}
+const GIRL=["..hhhh..",".hhhhhh.","hhsssshh","hhskskhh","hhsssshh","h.srrs.h","..dddd..",".dddddd.","sdddddds",".dddddd.","dddddddd","..s..s..","..s..s..",".ff..ff."];
+function girl(c,x,y,dress='#5aa0e0'){sprite(c,GIRL,x,y,{h:'#6b3a1f',s:'#f2c29b',k:'#2b1b2e',r:'#e98a8a',d:dress,f:'#7a3a2a'})}
+const FAIRY=["...ggg...","ww.gsg.ww","www.s.www","wwwpppwww",".w.ppp.w.","...ppp...","...s.s..."];
+function fairy(c,x,y){c.globalAlpha=.15;disc(c,x+4,y+3,12,'#fff6a8');c.globalAlpha=.25;disc(c,x+4,y+3,8,'#fff6a8');c.globalAlpha=.45;disc(c,x+4,y+3,5,'#ffffff');c.globalAlpha=1;
+  sprite(c,FAIRY,x,y,{g:'#ffd34d',s:'#f6cfae',w:'#bff0ff',p:'#c86bd8'});px(c,x+9,y+3,5,1,'#e8c06a');sparkle(c,x+15,y+3,'#fff36b')}
+const CUPCAKE=["...c...",".fffff.","fffwfff","fwfffff",".lllll.",".lilil.","..lll.."];
+const BALA=["y..ooo..y","yyoooooyy","yyowoooyy","yyoooooyy","y..ooo..y"];
+function lollipop(c,x,y){disc(c,x,y,4,'#ff6fae');disc(c,x,y,2,'#ffffff');px(c,x,y,1,1,'#ff6fae');px(c,x,y+5,1,6,'#f5f0e6')}
+function cupcake(c,x,y){sprite(c,CUPCAKE,x,y,{c:'#e63946',f:'#ffc4e1',w:'#ffffff',l:'#8ad3e8',i:'#5fb3cf'})}
+function bala(c,x,y){sprite(c,BALA,x,y,{y:'#ffe14d',o:'#ff9f43',w:'#fff4d6'})}
+function burst(c,cx,cy){for(let a=0;a<16;a++){const t=a/16*Math.PI*2;const r0=10,r1=a%2?30:44;for(let r=r0;r<r1;r+=1)px(c,cx+Math.cos(t)*r,cy+Math.sin(t)*r*.8,1,1,a%2?'#fff1b8':'#ffc2e2')}c.globalAlpha=.5;disc(c,cx,cy,12,'#ffffff');c.globalAlpha=1}
+function puff(c,cx,cy){[[0,0,7],[-8,2,5],[8,1,6],[-3,-6,5],[5,-6,4]].forEach(([dx,dy,r])=>{disc(c,cx+dx,cy+dy,r,'#e6e1ec');disc(c,cx+dx-1,cy+dy-1,r-2,'#ffffff')})}
+
+function ctx(id){const c=document.getElementById(id).getContext('2d');c.imageSmoothingEnabled=false;return c}
+const DAY=['#7ec8f5','#8dd0f7','#9fd8f8','#b2e0f9','#c6e8fa','#d8f0fb'];
+
+// 1 abertura
+(()=>{const c=ctx('f1');sky(c,['#9ad8ff','#a8ddff','#b8e3ff','#c8e9ff','#d8efff','#e8f5ff']);rainbowArc(c,96,112,104,7);
+  cloud(c,6,96);cloud(c,22,100);cloud(c,160,96);cloud(c,174,101);hills(c,96,3,.05,1,'#7fd060');px(c,0,100,W,8,'#6cc04a');
+  [[20,20],[170,26],[40,50],[150,58],[96,10]].forEach(([x,y])=>sparkle(c,x,y,'#ffffff'));horse(c,84,84,0)})();
+// estilo Stardew Valley: chão em quadradinhos, personagens de lado com sombra; altura do pulo e do voo = distância até a sombra
+let noShadow=false; // no céu não há chão, então não há sombra
+function shadow(c,cx,cy,rx){if(noShadow)return;c.globalAlpha=.28;for(let y=-2;y<=2;y++){const w=Math.round(rx*Math.sqrt(1-(y*y)/6.25));px(c,cx-w,cy+y,2*w+1,1,'#1d3a12')}c.globalAlpha=1}
+function field(c,s){px(c,0,0,W,H,'#6cc04a');for(let ty=0;ty<H;ty+=12)for(let tx=0;tx<W;tx+=12)if(((tx+ty)/12)%2)px(c,tx,ty,12,12,'#68bb47');seed=s;for(let i=0;i<70;i++){const x=rnd()*W,y=rnd()*H;px(c,x,y,1,2,'#4e9a38');px(c,x+2,y,1,2,'#4e9a38');px(c,x+1,y+1,1,1,'#4e9a38')}}
+function pathY(yc,x,amp,f){return Math.round(yc+Math.sin(x*f)*amp)}
+function path(c,yc,w,amp=4,f=.04){for(let x=0;x<W;x++){const y=pathY(yc,x,amp,f)-w/2;px(c,x,y,1,w,'#c99a62');px(c,x,y,1,1,'#a87a48');px(c,x,y+w-1,1,1,'#a87a48')}seed=13;for(let i=0;i<34;i++){const x=rnd()*W;px(c,x,pathY(yc,x,amp,f)-w/2+2+rnd()*(w-4),1,1,'#a87a48')}}
+function flowersMap(c,s,n=18){seed=s;for(let i=0;i<n;i++){const x=Math.round(rnd()*W),y=Math.round(rnd()*H),col=['#ff8fc4','#fff36b','#ffffff','#b48cff'][i%4];px(c,x-1,y,3,1,col);px(c,x,y-1,1,3,col);px(c,x,y,1,1,'#ffb02e')}}
+function treeTop(c,x,y){shadow(c,x+2,y,9);px(c,x-1,y-6,3,6,'#7a4a26');disc(c,x,y-13,8,'#3d8b3a');disc(c,x-2,y-15,5,'#56a64a');px(c,x+3,y-11,1,1,'#ff6b6b');px(c,x-4,y-9,1,1,'#ff6b6b')}
+function fenceV(c,x,y,len){px(c,x+1,y,1,len,'#a8703a');for(let i=0;i<len;i+=6){px(c,x,y+i,3,5,'#7d4f24');px(c,x,y+i,3,1,'#c08848')}px(c,x+3,y+1,1,len-1,'#00000022')}
+function pond(c,x,y){for(let j=-7;j<=7;j++){const w=Math.round(16*Math.sqrt(1-(j*j)/56));px(c,x-w,y+j,2*w+1,1,'#3f8fc8');if(Math.abs(j)<6){const w2=w-2;px(c,x-w2,y+j,2*w2+1,1,'#5fb3e8')}}px(c,x-6,y-3,4,1,'#bfe6ff');px(c,x+3,y+2,3,1,'#bfe6ff')}
+function tint(c,col,a){c.globalAlpha=a;px(c,0,0,W,H,col);c.globalAlpha=1}
+function mapCloud(c,x,y){c.globalAlpha=.16;cloud(c,x+6,y+14,'#1d3a12');c.globalAlpha=.9;cloud(c,x,y,'#ffffff');c.globalAlpha=1}
+function farm(c){field(c,2);path(c,70,14,3,.04);house(c,12,46);px(c,10,46,36,2,'#00000030');fence(c,120,36,66);pond(c,164,52);treeTop(c,66,40);treeTop(c,186,92);treeTop(c,8,96);flowersMap(c,3)}
+
+
+// doces gigantes, maiores que o unicórnio (escala do desenho da Sofia)
+function bigLollipop(c,x,y){shadow(c,x,y+34,8);px(c,x-1,y+10,3,24,'#f5f0e6');px(c,x+1,y+10,1,24,'#d8cfc0');for(let r=11,k=0;r>0;r-=2,k++)disc(c,x,y,r,k%2?'#ffffff':['#ff6fae','#a46bff','#4aa8ff','#ff6fae','#ffe14d','#ff6fae'][k>>1]);px(c,x-6,y-6,3,2,'#ffffffcc')}
+function bigCupcake(c,x,y){shadow(c,x,y+22,11);for(let j=0;j<10;j++){const w=9-Math.floor(j/4);px(c,x-w,y+12+j,2*w+1,1,'#8ad3e8');}for(let i=-8;i<=8;i+=3)px(c,x+i,y+12,1,10,'#5fb3cf');disc(c,x,y+8,10,'#ffc4e1');disc(c,x,y+3,7,'#ffb0d6');disc(c,x,y-1,4,'#ffc4e1');disc(c,x,y-7,3,'#e63946');px(c,x-1,y-8,1,1,'#ffffff');seed=99;for(let i=0;i<10;i++)px(c,x-8+rnd()*16,y+rnd()*12,1,1,['#ffe14d','#4aa8ff','#5fd068'][i%3])}
+function brigadeiro(c,x,y){shadow(c,x,y+10,9);for(let j=0;j<5;j++)px(c,x-9+j,y+4+j,19-2*j,1,j%2?'#c68a4a':'#a86a32');disc(c,x,y,8,'#4a2614');seed=41;for(let i=0;i<22;i++)px(c,x-7+rnd()*14,y-7+rnd()*11,1,1,i%2?'#2a140a':'#7a4a2a');px(c,x-4,y-5,2,1,'#8a5a3a')}
+function chocolate(c,x,y){shadow(c,x+15,y+18,16);px(c,x,y,30,16,'#6b3a1f');for(let i=0;i<=30;i+=6)px(c,x+i,y,1,16,'#4a2614');for(let j=0;j<=16;j+=5)px(c,x,y+j,30,1,'#4a2614');for(let i=1;i<30;i+=6)for(let j=1;j<16;j+=5)px(c,x+i,y+j,4,1,'#8a5030');px(c,x+18,y-1,13,18,'#8a55d8');for(let j=0;j<18;j+=3)px(c,x+18,y-1+j,1,2,'#b48cff');px(c,x+21,y+5,8,5,'#5fd068')}
+function arrows(c,x,y){px(c,x,y,1,1,'#ffffff');px(c,x-1,y+1,3,1,'#ffffff');px(c,x-2,y+2,5,1,'#ffffff');px(c,x-2,y+9,5,1,'#ffffff');px(c,x-1,y+10,3,1,'#ffffff');px(c,x,y+11,1,1,'#ffffff')}
+// do chão ao céu: lá do alto, só céu, estrelas e arco-íris
+function sceneHigh(c,s){field(c,s);path(c,82,6,3,.05);seed=s;for(let i=0;i<16;i++){const x=rnd()*W,y=rnd()*H;disc(c,x,y,2,'#3d8b3a');px(c,x-1,y-1,1,1,'#56a64a')}
+  px(c,150,14,8,5,'#c98b5a');px(c,149,11,10,3,'#b0413e');px(c,140,22,30,1,'#a8703a');disc(c,40,30,5,'#3f8fc8');disc(c,40,30,3,'#5fb3e8');
+  tint(c,'#ffffff',.2);for(let k=0;k<5;k++)mapCloud(c,(k*47+6)%180,4+(k*31)%80)}
+function balloon(c,x,y,a,b){disc(c,x,y,5,a);px(c,x-1,y-5,2,11,b);px(c,x-4,y-1,2,4,b);px(c,x+3,y-1,2,4,b);px(c,x,y+5,1,3,'#7a4a26');px(c,x-1,y+8,3,2,'#8a5a2c')}
+function birds(c,s,n){seed=s;for(let i=0;i<n;i++){const x=rnd()*W,y=rnd()*50;px(c,x,y,1,1,'#5a5a7a');px(c,x+1,y+1,1,1,'#5a5a7a');px(c,x+2,y,1,1,'#5a5a7a')}}
+function sceneSky(c){sky(c,['#8fd0ff','#a5d9ff','#bce3ff','#d3ecff','#ffe3f1','#ffd6ea']);[[0,30],[60,70],[120,40],[150,88],[20,92],[90,16]].forEach(([x,y])=>cloud(c,x,y));
+  balloon(c,170,22,'#ff8fc4','#ffe14d');balloon(c,36,58,'#7fd0ff','#ffffff');birds(c,3,5);seed=71;for(let i=0;i<10;i++)sparkle(c,rnd()*W,rnd()*H,'#ffffff')}
+function sceneStars(c){sky(c,['#1b1440','#251a55','#30206a','#3c2878','#4a3088','#5a3a96']);seed=81;for(let i=0;i<90;i++)px(c,rnd()*W,rnd()*H,1,1,i%5?'#fff6d6':'#bfe6ff');
+  for(let i=0;i<8;i++)sparkle(c,rnd()*W,rnd()*H,'#fff6d6');disc(c,160,20,8,'#fff6c8');disc(c,164,17,7,'#251a55');for(let i=0;i<14;i++)px(c,20+i*2,14+i,2,1,i<4?'#ffffff':'#ffffff66');
+  c.globalAlpha=.5;cloud(c,10,98,'#b48cff');cloud(c,120,100,'#b48cff');c.globalAlpha=1}
+function sceneRainbow(c){sky(c,['#6a50c0','#8a62c8','#b47ccc','#e298c8','#ffbcc0','#ffdcb4']);seed=91;for(let i=0;i<30;i++)px(c,rnd()*W,rnd()*36,1,1,'#fff6d6');
+  c.globalAlpha=.5;rainbowArc(c,96,124,118,4);c.globalAlpha=1;rainbowArc(c,96,124,96,7);for(let x=-8;x<W;x+=24)cloud(c,x,100);seed=92;for(let i=0;i<18;i++)sparkle(c,rnd()*W,rnd()*90,['#ffffff','#fff36b','#ffb3d9'][i%3])}
+// nuvem de algodão-doce: a única coisa que ele come; cada uma deixa ele mais forte e mais colorido
+function cotton(c,x,y){shadow(c,x,y+22,6);c.globalAlpha=.35;disc(c,x,y,11,'#fff6a8');c.globalAlpha=1;disc(c,x-5,y+1,5,'#d9b5f7');disc(c,x+5,y+1,5,'#bfe6ff');disc(c,x,y-2,6,'#ffc4e1');disc(c,x-2,y-4,3,'#ffe0ef');px(c,x-8,y+3,17,3,'#ffc4e1');px(c,x-3,y-6,2,1,'#ffffff');sparkle(c,x+9,y-6,'#ffffff');sparkle(c,x-10,y-3,'#fff36b')}
+// cenário que fica mais bonito com o progresso (st 0 a 3)
+const FLOR=[['#ffffff','#fff36b'],['#ffffff','#fff36b','#ff8fc4'],['#ffffff','#fff36b','#ff8fc4','#b48cff','#7fd0ff'],['#ffffff','#fff36b','#ff8fc4','#b48cff','#7fd0ff','#ff9f43']];
+function scene(c,st,yc=64){field(c,20+st);path(c,yc,22,4,.05);seed=30+st;const n=6+st*16;for(let i=0;i<n;i++){const x=Math.round(rnd()*W),y=Math.round(rnd()*H),cs=FLOR[st],col=cs[i%cs.length];px(c,x-1,y,3,1,col);px(c,x,y-1,1,3,col);px(c,x,y,1,1,'#ffb02e')}
+  treeTop(c,14,28);treeTop(c,186,104);if(st>=1)treeTop(c,176,24);
+  if(st>=2){seed=50;for(let i=0;i<6;i++){const x=rnd()*W,y=rnd()*50;px(c,x,y,1,1,'#ffb3d9');px(c,x+2,y,1,1,'#ffb3d9');px(c,x+1,y+1,1,1,'#5a3418')}}
+  if(st>=3){c.globalAlpha=.9;rainbowArc(c,96,112,118,6);c.globalAlpha=1}
+  for(let k=0;k<st*2;k++)mapCloud(c,(k*53+10)%180,4+(k*29)%60);
+  if(st>=1){seed=60+st;for(let i=0;i<st*6;i++)sparkle(c,rnd()*W,rnd()*H,['#ffffff','#fff36b','#ffb3d9'][i%3])}}
+
+// 2 fazenda
+(()=>{const c=ctx('f2');farm(c);shadow(c,108,70,10);horse(c,96,56,null);shadow(c,88,71,4);girl(c,84,57)})();
+// 3 fada
+(()=>{const c=ctx('f3');farm(c);tint(c,'#6a2f8a',.3);tint(c,'#ff8a4a',.16);shadow(c,108,70,10);horse(c,96,56,null);shadow(c,88,71,4);girl(c,84,57);
+  shadow(c,121,48,4);fairy(c,116,24);seed=5;for(let i=0;i<9;i++)sparkle(c,104+rnd()*24,32+rnd()*22,i%2?'#fff36b':'#ffffff')})();
+// 4 o presente da fada: o cavalo continua marrom e já voa baixinho
+(()=>{const c=ctx('f4');farm(c);tint(c,'#6a2f8a',.26);tint(c,'#ff8a4a',.14);burst(c,108,54);shadow(c,108,70,9);horse(c,96,48,null,true);shadow(c,84,71,4);girl(c,80,57);fairy(c,128,20);
+  seed=9;for(let i=0;i<14;i++)sparkle(c,86+rnd()*44,34+rnd()*30,['#ffffff','#fff36b','#ffb3d9'][i%3])})();
+// 5 começo: cavalo voando baixinho, doces gigantes na trilha, cenário simples
+(()=>{const c=ctx('f5');scene(c,0);bigLollipop(c,120,36);brigadeiro(c,168,74);cotton(c,90,62);
+  shadow(c,64,78,8);horse(c,52,58,null,true);arrows(c,40,52);for(let i=0;i<4;i++)sparkle(c,48-i*6,66+i,'#fff1b8')})();
+// 6 desviando: unicórnio azul mais alto, cenário com mais cor
+(()=>{const c=ctx('f6');noShadow=true;sceneHigh(c,6);bigCupcake(c,150,58);chocolate(c,156,10);bigLollipop(c,40,78);cotton(c,104,30);
+  horse(c,70,30,2,true);for(let i=0;i<4;i++)px(c,96-i*4,36+i*2,1,1,'#ffffff');piece(c,96,36);
+  seed=12;for(let i=0;i<6;i++)sparkle(c,90+rnd()*24,20+rnd()*20,['#ffc4e1','#bfe6ff','#ffffff'][i%3]);noShadow=false})();
+// 7 encostou no doce
+(()=>{const c=ctx('f7');noShadow=true;sceneHigh(c,7);const y=66;bigCupcake(c,124,y-24);
+  for(let a=0;a<8;a++){const t=a/8*Math.PI*2;for(let r=5;r<9;r++)px(c,112+Math.cos(t)*r,y-18+Math.sin(t)*r,1,1,'#fff1b8')}
+  horse(c,84,y-26,1,true);seed=4;for(let i=0;i<8;i++)px(c,104+rnd()*20,y-30+rnd()*16,2,2,['#ff6fae','#ffc4e1','#ffe14d'][i%3]);noShadow=false})();
+// 8 força máxima: cenário no máximo, doces lá embaixo
+(()=>{const c=ctx('f8');noShadow=true;sceneRainbow(c);cotton(c,150,30);brigadeiro(c,30,20);trail(c,0,86,40,2);horse(c,84,32,5,true);noShadow=false})();
+// 9 final: o arco-íris mais lindo do mundo
+(()=>{const c=ctx('f9');farm(c);c.globalAlpha=.55;rainbowArc(c,104,78,104,4);c.globalAlpha=.95;rainbowArc(c,104,70,82,6);c.globalAlpha=1;
+  mapCloud(c,0,58);mapCloud(c,170,56);seed=77;for(let i=0;i<22;i++)sparkle(c,rnd()*W,rnd()*70,['#ffffff','#fff36b','#ffb3d9','#bde0ff'][i%4]);
+  shadow(c,110,70,10);horse(c,98,56,5);shadow(c,88,71,4);girl(c,84,57);fairy(c,126,32)})();
+// a bolsinha em três passos
+(()=>{const c=ctx('b1');scene(c,0);cotton(c,124,38);shadow(c,70,74,6);horse(c,58,52,0,true);for(let i=0;i<5;i++)px(c,84+i*6,52-i*2,2,1,'#ffffffaa')})();
+(()=>{const c=ctx('b2');scene(c,0);cotton(c,112,36);shadow(c,96,74,6);horse(c,84,36,0,true);for(let i=0;i<5;i++)px(c,104-i*2.5,36+i*2.2,1,1,'#ffffff');piece(c,94,47);sparkle(c,100,30,'#ffffff')})();
+(()=>{const c=ctx('b3');scene(c,1);burst(c,96,52);shadow(c,96,78,6);horse(c,84,42,1,true);piece(c,108,44);seed=14;for(let i=0;i<10;i++)sparkle(c,76+rnd()*40,30+rnd()*30,['#ffc4e1','#d9b5f7','#ffffff','#fff36b'][i%4])})();
+// progresso do cenário
+(()=>{let c=ctx('p0');scene(c,0);shadow(c,96,74,7);horse(c,84,56,null,true);
+  c=ctx('p1');noShadow=true;sceneHigh(c,21);horse(c,84,40,1,true);
+  c=ctx('p2');sceneSky(c);horse(c,84,44,3,true);
+  c=ctx('p3');sceneStars(c);horse(c,84,44,4,true);
+  c=ctx('p4');sceneRainbow(c);trail(c,0,86,58,2);horse(c,84,50,5,true);noShadow=false})();
+// doces
+(()=>{const c=ctx('dc');field(c,40);path(c,70,22,0,0);bigLollipop(c,40,40);bigCupcake(c,84,52);brigadeiro(c,122,66);chocolate(c,146,52);cotton(c,172,22);shadow(c,26,92,4);horse(c,8,72,0,true)})();
+// paleta
+document.getElementById('pal').innerHTML=[['Grama','#6cc04a'],['Grama escura','#4e9a38'],['Terra','#c99a62'],['Madeira','#8a4b22'],['Telhado','#b0413e'],['Água','#5fb3e8'],['Céu','#9ad8ff'],['Pergaminho','#f8dfae'],['Unicórnio rosa','#f9a8cc'],['Crina','#e2589a'],['Chifre','#ffc93a'],['Doce','#ff6fae'],['Algodão-doce','#ffc4e1'],['Chocolate','#6b3a1f'],['Fim de tarde','#8a4b86'],['Brilho','#fff36b']].map(([n,c])=>`<div class="sw"><i style="--c:${c}"></i>${n}</div>`).join('');
+// HUDs
+function hud(id,lv,dist,n=0,vida=5){const segs=LV.map((L,i)=>`<i class="${i<=lv?'on':''}" style="--c:${L.m.length>1?'linear-gradient(90deg,'+L.m.join(',')+')':L.m[0]}"></i>`).join('');
+  document.getElementById(id).innerHTML=`<div class="left"><div class="forca"><span>Força</span>${segs}</div><div class="forca vida"><span>Vida</span>${[0,1,2,3,4].map(k=>`<b class="${k<vida?'on':''}">♥</b>`).join('')}</div></div><div class="side"><div class="dist">${dist} m</div><div class="dist bolsa"><i></i>Bolsinha × ${n}</div></div>`}
+hud('h5',-1,20,0,5);hud('h6',2,410,2,4);hud('h7',1,260,1,2);hud('h8',5,1200,4,5);
+
+// níveis
+const lvBox=document.getElementById('levels');
+[{n:'Cavalo',a:'Voa baixinho, perto do chão'}].concat(LV).forEach((L,i0)=>{const i=i0-1;const d=document.createElement('div');d.className='lv';d.innerHTML=`<canvas width="34" height="30"></canvas><b>${L.n}</b><span>${L.a}</span>`;lvBox.appendChild(d);
+  const c=d.querySelector('canvas').getContext('2d');px(c,0,0,34,30,['#cfe9ff','#cfe9ff','#bfe3ff','#a8d6ff','#d3ecff','#2c1f5e','#e298c8'][i0]);if(i0<=1){px(c,0,27,34,3,'#6cc04a');c.globalAlpha=.25;px(c,8,27,16,1,'#1d3a12');c.globalAlpha=1}
+  else if(i0<=3){px(c,0,26,34,4,'#6cc04a');px(c,4,27,3,2,'#3d8b3a');px(c,24,26,3,2,'#3d8b3a')}
+  else if(i0===5){seed=3;for(let k=0;k<14;k++)px(c,rnd()*34,rnd()*30,1,1,'#fff6d6')}
+  if(i0>=2&&i0!==5)for(let k=0;k<3;k++)px(c,(k*13+2)%30,3+(k*7)%14,6,2,'#ffffff');
+  const y=i0<=1?17:Math.round(13-i0*1.2);if(i===5)for(let x=0;x<6;x++)for(let k=0;k<6;k++)px(c,x,y+5+k,1,1,RAIN[k]);horse(c,5,y,i<0?null:i,true);});
+</script>
+</html>

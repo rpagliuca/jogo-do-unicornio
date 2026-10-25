@@ -158,7 +158,7 @@ function horse(c, x, y, lv, voando, comBolsa = voando, fase = 0) {
 }
 function bag(c, x, y) { px(c, x + 9, y + 7, 7, 1, '#8a4b22'); sprite(c, BAG, x + 7, y + 8, { b: '#a03a6c', p: '#ff8fc4', w: '#ffffff' }); }
 function piece(c, x, y) { disc(c, x, y, 2, '#ffc4e1'); px(c, x - 1, y - 1, 1, 1, '#ffffff'); }
-// Menina feita a partir do retrato em pixel art da Sofia (sofia.png): cabelo castanho longo com franja,
+// Menina feita a partir de um retrato em pixel art da Sofia (fora do repositório): cabelo castanho longo com franja,
 // olhos castanhos, sorriso e blusa branca com flores coloridas.
 const GIRL = [
   '...hhhh...',

@@ -4,9 +4,13 @@ Jogo feito pelo Rafael e pela Sofia. Um cavalo ganha da fada o poder de voar e u
 desvia de doces gigantes, guarda pedacinhos de nuvens de algodão-doce e, a cada pedacinho que
 come, fica mais forte e mais colorido, até virar arco-íris.
 
+**Jogar agora:** https://rpagliuca.github.io/jogo-do-unicornio/ ·
+**Como o jogo foi criado:** https://rpagliuca.github.io/jogo-do-unicornio/historia.html
+
 ## Como jogar
 
-Abra o `index.html` no Chrome (dois cliques no arquivo já funciona; nada para instalar).
+No site acima, ou abrindo o `index.html` no Chrome (dois cliques no arquivo já funciona; nada para instalar).
+Funciona com o controle DS4, com o teclado e, no celular deitado, com botões na tela.
 
 | Controle DS4 | Teclado | O que faz |
 |---|---|---|
@@ -32,4 +36,4 @@ JavaScript puro desenhando num canvas de 192×108 ampliado: `src/desenho.js` (pi
 `src/fundos.js` (cenários), `src/jogo.js` (controle, história e corrida).
 Para testar uma parte direto: `index.html#nivel3`, `#historia2`, `#final`.
 
-O roteiro e os desenhos aprovados estão em https://claude.ai/artifact/1ZDj8eN984oAyigMcZNiJ6
+O planejamento aprovado está em `planejamento.html`, e a história do projeto em `historia.html`.
