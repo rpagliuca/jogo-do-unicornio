@@ -293,11 +293,6 @@ function atualizar(dt, e) {
 }
 
 // ---------- desenhar
-// retrato em pixel art da Sofia, mostrado em resolução cheia na tela de abertura (se o arquivo existir)
-const retrato = new Image();
-let retratoOk = false;
-retrato.onload = () => { retratoOk = true; };
-retrato.src = 'sofia.png';
 function desenharObj(o) {
   switch (o.t) {
     case 'pirulito': bigLollipop(c, o.x, o.y); break;
@@ -350,10 +345,27 @@ function desenharFinal() {
   shadow(c, 88, 71, 4); girl(c, 84, 57);
   fairy(c, 126, 32 + Math.round(Math.sin(tempo * 3)));
 }
+// enquanto ninguém aperta START, a menina brinca de pega-pega com o unicórnio na grama
+function espelhado(x, w, fn) { c.save(); c.translate(2 * Math.round(x) + w, 0); c.scale(-1, 1); fn(); c.restore(); }
 function desenharTitulo() {
   c.drawImage(CENAS.titulo, 0, 0);
-  const x = ((tempo * 20) % 230) - 30;
-  horse(c, x, 84 + (Math.floor(tempo * 6) % 2), 0, Math.floor(tempo * 6) % 2 === 0, false);
+  const t = tempo, v = 0.55;
+  const ux = 84 + Math.sin(t * v) * 62, gx = 88 + Math.sin((t - 0.9) * v) * 62;
+  const uDir = Math.cos(t * v) >= 0, gDir = Math.cos((t - 0.9) * v) >= 0;
+  const uy = 84 - Math.round(Math.abs(Math.sin(t * 4)) * 5), gy = 84 - Math.round(Math.abs(Math.sin(t * 6)) * 2);
+  const lv = Math.floor(t / 2.5) % 6, passo = Math.floor(t * 8) % 2 === 0;
+  const unicornio = () => horse(c, ux, uy, lv, uy < 82 || passo, false, Math.floor(t * 8));
+  if (uDir) unicornio(); else espelhado(ux, 24, unicornio);
+  const menina = () => girl(c, gx, gy);
+  if (gDir) menina(); else espelhado(gx - 1, 10, menina);
+  for (let i = 0; i < 3; i++) { // brilhos atrás do unicórnio
+    const bx = uDir ? ux - 2 - i * 5 : ux + 26 + i * 5;
+    if (Math.sin(t * 6 + i) > 0) sparkle(c, bx, uy + 8 + i, LV[lv].m[i % LV[lv].m.length]);
+  }
+  if (Math.abs(ux + 12 - gx) < 18) { // coraçãozinho quando ela alcança o unicórnio
+    const hx = Math.round((ux + 12 + gx) / 2), hy = 74 - Math.round((t * 6) % 6);
+    px(c, hx - 2, hy, 2, 1, '#ff4d6d'); px(c, hx + 1, hy, 2, 1, '#ff4d6d'); px(c, hx - 2, hy + 1, 5, 1, '#ff4d6d'); px(c, hx - 1, hy + 2, 3, 1, '#ff4d6d'); px(c, hx, hy + 3, 1, 1, '#ff4d6d');
+  }
 }
 
 // texto em alta resolução, por cima da pixel art (coordenadas da tela pequena)
@@ -433,15 +445,7 @@ function desenhar() {
 
   if (modo === 'titulo') {
     texto('Jogo do Unicórnio', 96, 26, 15, '#ffffff', 'center', '#b0367a');
-    let cx = 96;
-    if (retratoOk) {
-      const h = 60, w = h * retrato.width / retrato.height, x = 6, y = 44;
-      out.fillStyle = '#8a4b22'; out.fillRect((x - 1.5) * S, (y - 1.5) * S, (w + 3) * S, (h + 3) * S);
-      out.imageSmoothingEnabled = retrato.height > h * S;
-      out.drawImage(retrato, x * S, y * S, w * S, h * S);
-      out.imageSmoothingEnabled = false;
-      cx = 120;
-    }
+    const cx = 96;
     texto('Jogo criado por Sofia', cx, 42, 6, '#ffffff', 'center', '#a03a6c');
     if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', cx, 52, 7, '#5b2a7a', 'center', '#ffffffaa');
     if (!controle) { texto('Ligue o controle e aperte um botão', cx, 64, 4.2, '#3b2a5a', 'center', null); texto('ou use o teclado', cx, 69.5, 4.2, '#3b2a5a', 'center', null); }
