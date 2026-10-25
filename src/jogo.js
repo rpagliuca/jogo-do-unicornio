@@ -320,6 +320,7 @@ function desenharTitulo() {
 
 // texto em alta resolução, por cima da pixel art (coordenadas da tela pequena)
 function texto(t, x, y, tam, cor = '#ffffff', alinh = 'left', sombra = '#000000aa') {
+  t = t.replace(/f([il])/g, 'f\u200C$1'); // a fonte junta "fi" numa letra só
   out.font = `${Math.round(tam * S)}px "Pixelify Sans", "Courier New", monospace`;
   out.textAlign = alinh; out.textBaseline = 'top';
   if (sombra) { out.fillStyle = sombra; out.fillText(t, x * S + S * 0.5, y * S + S * 0.5); }
@@ -394,7 +395,8 @@ function desenhar() {
 
   if (modo === 'titulo') {
     texto('Jogo do Unicórnio', 96, 26, 15, '#ffffff', 'center', '#b0367a');
-    if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', 96, 50, 7, '#5b2a7a', 'center', '#ffffffaa');
+    texto('Jogo criado por Sofia', 96, 42, 6, '#ffffff', 'center', '#a03a6c');
+    if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', 96, 52, 7, '#5b2a7a', 'center', '#ffffffaa');
     texto(controle ? (mapaPadrao ? 'Controle conectado ✓ · aperte X, ○, ▲ ou ▼ para testar' : 'Controle conectado, mas com botões fora do padrão') : 'Ligue o controle e aperte um botão · ou use o teclado', 96, 64, 4.2, '#3b2a5a', 'center', null);
     if (ultimoBotao && ultimoBotaoT < 2) texto(`Botão: ${ultimoBotao}`, 96, 71, 4.2, '#a03a6c', 'center', null);
   } else if (modo === 'historia') {
