@@ -158,8 +158,29 @@ function horse(c, x, y, lv, voando, comBolsa = voando, fase = 0) {
 }
 function bag(c, x, y) { px(c, x + 9, y + 7, 7, 1, '#8a4b22'); sprite(c, BAG, x + 7, y + 8, { b: '#a03a6c', p: '#ff8fc4', w: '#ffffff' }); }
 function piece(c, x, y) { disc(c, x, y, 2, '#ffc4e1'); px(c, x - 1, y - 1, 1, 1, '#ffffff'); }
-const GIRL = ['..hhhh..', '.hhhhhh.', 'hhsssshh', 'hhskskhh', 'hhsssshh', 'h.srrs.h', '..dddd..', '.dddddd.', 'sdddddds', '.dddddd.', 'dddddddd', '..s..s..', '..s..s..', '.ff..ff.'];
-function girl(c, x, y) { sprite(c, GIRL, x, y, { h: '#6b3a1f', s: '#f2c29b', k: '#2b1b2e', r: '#e98a8a', d: '#5aa0e0', f: '#7a3a2a' }); }
+// Menina feita a partir do retrato em pixel art da Sofia (sofia.png): cabelo castanho longo com franja,
+// olhos castanhos, sorriso e blusa branca com flores coloridas.
+const GIRL = [
+  '...hhhh...',
+  '..hhhhhh..',
+  '.hhHhhHhh.',
+  '.hhsHhshh.',
+  '.hskssksh.',
+  '.hssssssh.',
+  '.hssrrssh.',
+  'hhhyyyyhhh',
+  'hhwpwwbwhh',
+  'hswwvwywsh',
+  'h.wgwwpw.h',
+  '...jjjj...',
+  '...s..s...',
+  '..ff..ff..'];
+function girl(c, x, y) {
+  sprite(c, GIRL, x - 1, y, {
+    h: '#9a5a2e', H: '#663924', s: '#f6c79c', k: '#292528', r: '#c8404a', y: '#ffd23a',
+    w: '#fbfbf1', p: '#ff6fae', b: '#4ab0f0', v: '#9a2a7a', g: '#5fd068', j: '#5aa0e0', f: '#7a3a2a',
+  });
+}
 const FAIRY = ['...ggg...', 'ww.gsg.ww', 'www.s.www', 'wwwpppwww', '.w.ppp.w.', '...ppp...', '...s.s...'];
 function fairy(c, x, y) {
   c.globalAlpha = 0.15; disc(c, x + 4, y + 3, 12, '#fff6a8'); c.globalAlpha = 0.25; disc(c, x + 4, y + 3, 8, '#fff6a8');

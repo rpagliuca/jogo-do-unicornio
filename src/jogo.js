@@ -293,6 +293,11 @@ function atualizar(dt, e) {
 }
 
 // ---------- desenhar
+// retrato em pixel art da Sofia, mostrado em resolução cheia na tela de abertura (se o arquivo existir)
+const retrato = new Image();
+let retratoOk = false;
+retrato.onload = () => { retratoOk = true; };
+retrato.src = 'sofia.png';
 function desenharObj(o) {
   switch (o.t) {
     case 'pirulito': bigLollipop(c, o.x, o.y); break;
@@ -428,10 +433,21 @@ function desenhar() {
 
   if (modo === 'titulo') {
     texto('Jogo do Unicórnio', 96, 26, 15, '#ffffff', 'center', '#b0367a');
-    texto('Jogo criado por Sofia', 96, 42, 6, '#ffffff', 'center', '#a03a6c');
-    if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', 96, 52, 7, '#5b2a7a', 'center', '#ffffffaa');
-    texto(controle ? (mapaPadrao ? 'Controle conectado ✓ · aperte X, ○, ▲ ou ▼ para testar' : 'Controle conectado, mas com botões fora do padrão') : 'Ligue o controle e aperte um botão · ou use o teclado', 96, 64, 4.2, '#3b2a5a', 'center', null);
-    if (ultimoBotao && ultimoBotaoT < 2) texto(`Botão: ${ultimoBotao}`, 96, 71, 4.2, '#a03a6c', 'center', null);
+    let cx = 96;
+    if (retratoOk) {
+      const h = 60, w = h * retrato.width / retrato.height, x = 6, y = 44;
+      out.fillStyle = '#8a4b22'; out.fillRect((x - 1.5) * S, (y - 1.5) * S, (w + 3) * S, (h + 3) * S);
+      out.imageSmoothingEnabled = retrato.height > h * S;
+      out.drawImage(retrato, x * S, y * S, w * S, h * S);
+      out.imageSmoothingEnabled = false;
+      cx = 120;
+    }
+    texto('Jogo criado por Sofia', cx, 42, 6, '#ffffff', 'center', '#a03a6c');
+    if (Math.floor(tempo * 2) % 2 === 0) texto('Aperte START', cx, 52, 7, '#5b2a7a', 'center', '#ffffffaa');
+    if (!controle) { texto('Ligue o controle e aperte um botão', cx, 64, 4.2, '#3b2a5a', 'center', null); texto('ou use o teclado', cx, 69.5, 4.2, '#3b2a5a', 'center', null); }
+    else if (!mapaPadrao) texto('Controle com botões fora do padrão', cx, 64, 4.2, '#3b2a5a', 'center', null);
+    else { texto('Controle conectado ✓', cx, 64, 4.2, '#3b2a5a', 'center', null); texto('aperte X, ○, ▲ ou ▼ para testar', cx, 69.5, 4.2, '#3b2a5a', 'center', null); }
+    if (ultimoBotao && ultimoBotaoT < 2) texto(`Botão: ${ultimoBotao}`, cx, 76, 4.2, '#a03a6c', 'center', null);
   } else if (modo === 'historia') {
     const h = HISTORIA[passo]; dialogo(h.quem, h.txt, letras);
   } else if (modo === 'final') {
